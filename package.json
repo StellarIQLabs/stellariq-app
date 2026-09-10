@@ -1,0 +1,22 @@
+{
+  "name": "stellariq-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "StellarIQ — Intelligence for Stellar DeFi. Product, API, SDK, Web and Contracts monorepo.",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "pnpm -r --if-present lint",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "dev:web": "pnpm --filter @stellariq/web dev",
+    "dev:api": "pnpm --filter @stellariq/api dev"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
