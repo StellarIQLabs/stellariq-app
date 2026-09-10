@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowImportingTsExtensions": false,
+    "paths": {
+      "@stellariq/types": ["./packages/types/src/index.ts"],
+      "@stellariq/schemas": ["./packages/schemas/src/index.ts"],
+      "@stellariq/ui": ["./packages/ui/src/index.ts"],
+      "@stellariq/sdk": ["./packages/sdk/src/index.ts"]
+    }
+  },
+  "include": ["apps/**/*", "packages/*/src/**/*", "tests/**/*"],
+  "exclude": ["**/node_modules", "**/dist", "**/.next", "**/coverage"]
+}
