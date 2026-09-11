@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Badge, BarsChart, Card, LineChart, Spinner, Stat } from '@stellariq/ui';
+import { Badge, BarsChart, Card, Spinner, Stat } from '@stellariq/ui';
 import type { AggregatedMarket, OhlcvCandle, Swap, Timeframe } from '@stellariq/types';
 import { ApiError, fetchMarket, fetchPriceHistory, fetchRecentSwaps } from '@/lib/api';
 import { formatChange, formatCount, formatPrice, formatTime, formatUsd } from '@/lib/format';
-
-const TIMEFRAMES: Timeframe[] = ['1H', '4H', '1D', '1W', '1M'];
+import { MarketPriceChart } from '@/components/charts/MarketPriceChart';
 
 function pairAssets(pair: string): [string, string] {
   const [base = '', quote = ''] = pair.split('/');
@@ -64,10 +63,6 @@ export function MarketDetail({ pair }: { pair: string }) {
     return () => controller.abort();
   }, [pair, timeframe]);
 
-  const closes = useMemo(
-    () => candles.map((c) => ({ timestamp: c.timestamp, value: c.close })),
-    [candles],
-  );
   const volumes = useMemo(
     () => candles.map((c) => ({ timestamp: c.timestamp, value: c.volume })),
     [candles],
@@ -107,31 +102,12 @@ export function MarketDetail({ pair }: { pair: string }) {
         />
       </section>
 
-      <Card
-        title="Price"
-        action={
-          <div className="flex gap-1" role="tablist" aria-label="Timeframe">
-            {TIMEFRAMES.map((tf) => (
-              <button
-                key={tf}
-                type="button"
-                role="tab"
-                aria-selected={tf === timeframe}
-                onClick={() => setTimeframe(tf)}
-                className={
-                  tf === timeframe
-                    ? 'rounded px-2.5 py-1 text-xs font-semibold bg-accent/15 text-accent'
-                    : 'rounded px-2.5 py-1 text-xs font-medium text-muted hover:text-text'
-                }
-              >
-                {tf}
-              </button>
-            ))}
-          </div>
-        }
-      >
-        <LineChart data={closes} label={`${market.id} price (${timeframe})`} />
-      </Card>
+      <MarketPriceChart
+        pair={market.id}
+        candles={candles}
+        timeframe={timeframe}
+        onTimeframeChange={setTimeframe}
+      />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card title="Volume history">
