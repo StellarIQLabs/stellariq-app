@@ -20,12 +20,14 @@
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "devDependencies": {
+    "@types/ws": "8.18.1",
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
     "eslint": "8.57.1",
     "prettier": "3.6.2"
   },
   "dependencies": {
-    "@stellariq/types": "workspace:^"
+    "@stellariq/types": "workspace:^",
+    "ws": "8.18.3"
   }
 }
