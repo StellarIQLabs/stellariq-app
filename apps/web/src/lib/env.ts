@@ -7,6 +7,8 @@ export interface WebEnv {
   wsUrl: string;
   stellarNetwork: string;
   horizonUrl: string;
+  /** Swap-router contract id. Undefined until the contract is deployed. */
+  swapRouterId?: string;
 }
 
 function required(name: string, fallback?: string): string {
@@ -17,6 +19,17 @@ function required(name: string, fallback?: string): string {
   return value;
 }
 
+function optional(name: string): string | undefined {
+  const value = process.env[name];
+  return value === undefined || value === '' ? undefined : value;
+}
+
+/** Spreads `{ [key]: value }` when the env var is set, otherwise nothing. */
+function optionalEnv(name: string, key: 'swapRouterId'): { swapRouterId?: string } {
+  const value = optional(name);
+  return value === undefined ? {} : { [key]: value };
+}
+
 let cached: WebEnv | null = null;
 
 export function getWebEnv(): WebEnv {
@@ -25,6 +38,7 @@ export function getWebEnv(): WebEnv {
     wsUrl: required('NEXT_PUBLIC_WS_URL', 'ws://localhost:4000/ws'),
     stellarNetwork: required('NEXT_PUBLIC_STELLAR_NETWORK', 'testnet'),
     horizonUrl: required('NEXT_PUBLIC_HORIZON_URL', 'https://horizon-testnet.stellar.org'),
+    ...optionalEnv('NEXT_PUBLIC_SWAP_ROUTER_ID', 'swapRouterId'),
   };
   return cached;
 }
