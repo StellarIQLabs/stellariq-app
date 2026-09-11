@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { Badge, Card, Spinner } from '@stellariq/ui';
 import { clsx } from 'clsx';
-import type { RouteKind, SwapRoute } from '@stellariq/types';
-import type { QuoteRequest } from '@/lib/api';
-import { useRoutes } from '@/hooks/useRoutes';
+import type { RouteKind, RoutesResponse, SwapRoute } from '@stellariq/types';
 
 export interface RouteComparisonProps {
-  request: QuoteRequest | null;
+  routes: RoutesResponse | null;
+  loading: boolean;
+  error: string | null;
+  visible: boolean;
   selectedRouteId?: string;
   onSelect?: (routeId: string) => void;
 }
@@ -20,9 +21,6 @@ const KIND_LABELS: Record<RouteKind, string> = {
 };
 
 function routePath(route: SwapRoute): string {
-  if (route.steps.length === 0) {
-    return '';
-  }
   const first = route.steps[0];
   if (!first) {
     return '';
@@ -35,8 +33,14 @@ function routePath(route: SwapRoute): string {
  * split with output amounts, highlighting the best net output (PRD §14 core
  * requirement). Selection feeds the breakdown and signing steps.
  */
-export function RouteComparison({ request, selectedRouteId, onSelect }: RouteComparisonProps) {
-  const { routes, loading, error } = useRoutes(request);
+export function RouteComparison({
+  routes,
+  loading,
+  error,
+  visible,
+  selectedRouteId,
+  onSelect,
+}: RouteComparisonProps) {
   const [internalSelection, setInternalSelection] = useState<string | null>(null);
 
   const bestId = routes?.bestRouteId ?? null;
@@ -48,7 +52,11 @@ export function RouteComparison({ request, selectedRouteId, onSelect }: RouteCom
     }
   }, [bestId, internalSelection]);
 
-  if (request === null) {
+  useEffect(() => {
+    setInternalSelection(null);
+  }, [routes?.from, routes?.to, routes?.inputAmount]);
+
+  if (!visible) {
     return null;
   }
 
