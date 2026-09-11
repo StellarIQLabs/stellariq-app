@@ -98,6 +98,37 @@ export function fetchSwapsTotal(signal?: AbortSignal): Promise<number> {
   return request<SwapsPage>('/v1/swaps?page=1&limit=1', signal).then((page) => page.total);
 }
 
+export interface PoolFilters {
+  protocol?: string;
+  sort?: 'tvl' | 'volume';
+  page?: number;
+  limit?: number;
+}
+
+export interface PoolPage {
+  data: Pool[];
+  page: number;
+  limit: number;
+  total: number;
+}
+
+/** Paginated pool catalog with protocol filter (PRD §17 pools). */
+export function fetchPools(filters: PoolFilters, signal?: AbortSignal): Promise<PoolPage> {
+  const params = new URLSearchParams();
+  if (filters.protocol) {
+    params.set('protocol', filters.protocol);
+  }
+  params.set('sort', filters.sort ?? 'tvl');
+  params.set('page', String(filters.page ?? 1));
+  params.set('limit', String(filters.limit ?? 20));
+  return request<PoolPage>(`/v1/pools?${params.toString()}`, signal);
+}
+
+/** Single pool with analytics (PRD §17 pools). */
+export function fetchPool(pool: string, signal?: AbortSignal): Promise<Pool> {
+  return request<Pool>(`/v1/pools/${encodeURIComponent(pool)}`, signal);
+}
+
 export interface AssetFilters {
   search?: string;
   verifiedOnly?: boolean;
