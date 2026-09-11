@@ -5,6 +5,7 @@ import type {
   Market,
   OhlcvCandle,
   Pool,
+  Price,
   Protocol,
   Swap,
   Timeframe,
@@ -49,6 +50,7 @@ export interface DataSource {
   ): Paged<Swap>;
   recentSwaps(limit: number): Swap[];
   swapsTotal(): number;
+  getPrice(asset: string): Price | null;
   priceHistory(asset: string, timeframe: Timeframe): OhlcvCandle[];
   volumeSeries(): SeriesPoint[];
   liquiditySeries(asset?: string): SeriesPoint[];

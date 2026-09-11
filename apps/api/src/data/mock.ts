@@ -5,6 +5,7 @@ import type {
   Market,
   OhlcvCandle,
   Pool,
+  Price,
   Protocol,
   Swap,
   Timeframe,
@@ -400,6 +401,24 @@ export class MockDataSource implements DataSource {
 
   swapsTotal(): number {
     return 84291;
+  }
+
+  getPrice(asset: string): Price | null {
+    const found = ASSETS.find((a) => a.id === asset || a.code === asset);
+    if (!found || found.price === undefined) {
+      return null;
+    }
+    const sources = MARKETS.filter(
+      (m) => m.baseAsset === found.code || m.quoteAsset === found.code,
+    ).length;
+    return {
+      asset: found.code,
+      price: found.price,
+      currency: 'USD',
+      timestamp: Math.floor(Date.now() / 1000),
+      sources,
+      confidence: 0.998,
+    };
   }
 
   priceHistory(asset: string, timeframe: Timeframe): OhlcvCandle[] {

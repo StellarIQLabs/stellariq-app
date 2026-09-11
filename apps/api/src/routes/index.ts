@@ -2,6 +2,7 @@ import type { FastifyInstance } from 'fastify';
 import type { DataSource } from '../data/source.js';
 import { healthRoutes } from './health.js';
 import { assetRoutes } from './assets.js';
+import { priceRoutes } from './prices.js';
 
 /** A domain route module: registers its endpoints against the app. */
 export type RouteModule = (app: FastifyInstance, source: DataSource) => void | Promise<void>;
@@ -10,7 +11,7 @@ export type RouteModule = (app: FastifyInstance, source: DataSource) => void | P
  * Modular route registry — every PRD §17 domain adds its module here.
  * Domain tasks append their module; nothing else changes.
  */
-export const routeModules: RouteModule[] = [healthRoutes, assetRoutes];
+export const routeModules: RouteModule[] = [healthRoutes, assetRoutes, priceRoutes];
 
 export async function registerRoutes(app: FastifyInstance, source: DataSource): Promise<void> {
   for (const register of routeModules) {
