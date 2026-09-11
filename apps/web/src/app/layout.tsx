@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { AppShell } from '@/components/layout/AppShell';
 import './globals.css';
 
 export const metadata = {
@@ -10,15 +11,13 @@ export const metadata = {
     'Asset prices, DEX markets, pool analytics and best-execution swaps for Stellar DeFi.',
 };
 
-// Base application shell. The full header/sidebar navigation lands in the
-// global-layout task; this establishes the document structure every page shares.
+// Global layout: header, sidebar, mobile shell, breadcrumbs and footer wrap
+// every page via AppShell.
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-screen bg-background font-sans text-text antialiased">
-        <div id="app-shell" className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4">
-          {children}
-        </div>
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

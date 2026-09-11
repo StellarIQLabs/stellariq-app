@@ -62,6 +62,9 @@ importers:
       '@stellariq/ui':
         specifier: workspace:^
         version: link:../../packages/ui
+      clsx:
+        specifier: 2.1.1
+        version: 2.1.1
       next:
         specifier: 14.2.35
         version: 14.2.35(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
