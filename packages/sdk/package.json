@@ -17,6 +17,7 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "lint": "eslint src --ext .ts",
+    "test": "node --import tsx --test $(find src -name '*.test.ts')",
     "clean": "rm -rf dist *.tsbuildinfo"
   },
   "devDependencies": {
@@ -24,7 +25,8 @@
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
     "eslint": "8.57.1",
-    "prettier": "3.6.2"
+    "prettier": "3.6.2",
+    "tsx": "4.20.6"
   },
   "dependencies": {
     "@stellariq/types": "workspace:^",
