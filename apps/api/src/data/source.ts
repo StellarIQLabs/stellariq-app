@@ -52,8 +52,8 @@ export interface DataSource {
   swapsTotal(): number;
   getPrice(asset: string): Price | null;
   priceHistory(asset: string, timeframe: Timeframe): OhlcvCandle[];
-  volumeSeries(): SeriesPoint[];
-  liquiditySeries(asset?: string): SeriesPoint[];
+  volumeSeries(timeframe: Timeframe): SeriesPoint[];
+  liquiditySeries(asset: string | undefined, timeframe: Timeframe): SeriesPoint[];
   /** Null when either side is unknown — the quote task turns this into 404s. */
   poolReserves(
     assetA: string,

@@ -286,6 +286,19 @@ const TIMEFRAME_POINTS: Record<Timeframe, { points: number; step: number }> = {
   '1M': { points: 120, step: 21600 },
 };
 
+/** Bucket timestamps for analytics series per timeframe. */
+function seriesBuckets(timeframe: Timeframe): number[] {
+  const specs: Record<Timeframe, { points: number; step: number }> = {
+    '1H': { points: 12, step: 300 },
+    '4H': { points: 16, step: 900 },
+    '1D': { points: 24, step: HOUR },
+    '1W': { points: 28, step: 6 * HOUR },
+    '1M': { points: 30, step: 24 * HOUR },
+  };
+  const { points, step } = specs[timeframe];
+  return Array.from({ length: points }, (_, i) => BOOT_TIME - (points - 1 - i) * step);
+}
+
 function basePrice(asset: string): number {
   const found = ASSETS.find((a) => a.id === asset || a.code === asset);
   return found?.price ?? 1;
@@ -444,17 +457,19 @@ export class MockDataSource implements DataSource {
     });
   }
 
-  volumeSeries(): SeriesPoint[] {
-    return Array.from({ length: 24 }, (_, i) => ({
-      timestamp: BOOT_TIME - (23 - i) * HOUR,
+  volumeSeries(timeframe: Timeframe): SeriesPoint[] {
+    const buckets = seriesBuckets(timeframe);
+    return buckets.map((timestamp, i) => ({
+      timestamp,
       value: Math.round(380000 + Math.abs(Math.sin(i / 3)) * 320000),
     }));
   }
 
-  liquiditySeries(asset?: string): SeriesPoint[] {
+  liquiditySeries(asset: string | undefined, timeframe: Timeframe): SeriesPoint[] {
     const scale = asset ? 0.4 : 1;
-    return Array.from({ length: 24 }, (_, i) => ({
-      timestamp: BOOT_TIME - (23 - i) * HOUR,
+    const buckets = seriesBuckets(timeframe);
+    return buckets.map((timestamp, i) => ({
+      timestamp,
       value: Math.round((36000000 + i * 420000) * scale),
     }));
   }
