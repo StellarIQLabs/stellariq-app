@@ -35,6 +35,9 @@
   },
   "devDependencies": {
     "@types/node": "22",
+    "@typescript-eslint/eslint-plugin": "8.46.2",
+    "@typescript-eslint/parser": "8.46.2",
+    "eslint": "8.57.1",
     "husky": "9.1.7",
     "lint-staged": "16.2.7",
     "prettier": "3.6.2",
