@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import { Badge, Card, Spinner, Table } from '@stellariq/ui';
 import { useOverviewData } from '@/hooks/useOverviewData';
-import { formatChange, formatCount, formatPrice, formatTime, formatUsd } from '@/lib/format';
+import { formatCount, formatTime, formatUsd } from '@/lib/format';
 import { SummaryStatCards } from './SummaryStatCards';
+import { TopMarketsTable } from './TopMarketsTable';
 
 /**
  * Overview dashboard (PRD §19): Stellar DeFi totals plus sections for top
@@ -35,45 +36,7 @@ export function OverviewDashboard() {
       <SummaryStatCards />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card
-          title="Top markets"
-          action={
-            <Link href="/markets" className="text-sm text-accent hover:underline">
-              View all
-            </Link>
-          }
-        >
-          <Table
-            columns={[
-              {
-                key: 'pair',
-                header: 'Pair',
-                render: (m) => <span className="font-mono">{m.id}</span>,
-              },
-              {
-                key: 'price',
-                header: 'Price',
-                align: 'right',
-                render: (m) => <span className="font-mono">{formatPrice(m.price)}</span>,
-              },
-              {
-                key: 'change',
-                header: '24h',
-                align: 'right',
-                render: (m) => formatChange(m.priceChange24h),
-              },
-              {
-                key: 'volume',
-                header: 'Volume',
-                align: 'right',
-                render: (m) => <span className="font-mono">{formatUsd(m.volume24h)}</span>,
-              },
-            ]}
-            rows={data.markets}
-            keyOf={(m) => m.id}
-            emptyMessage="No markets indexed yet."
-          />
-        </Card>
+        <TopMarketsTable markets={data.markets} />
 
         <Card
           title="Top pools"
