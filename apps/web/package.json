@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@stellar/stellar-sdk": "13.3.0",
     "@stellariq/schemas": "workspace:^",
     "@stellariq/sdk": "workspace:^",
     "@stellariq/types": "workspace:^",
