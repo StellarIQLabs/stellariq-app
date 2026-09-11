@@ -1,8 +1,13 @@
-# stellariq-app — Product, API, SDK, Web & Contracts
+# stellariq-app — Product, API, SDK & Web
 
 **StellarIQ** — _Intelligence for Stellar DeFi._ This repo is the product and
 user-facing layer: the web dashboard, the public REST + WebSocket API, the
-TypeScript SDK, the shared design system, and the Soroban contract workspace.
+TypeScript SDK, and the shared design system.
+
+> **Contracts moved:** Soroban contracts now live in the standalone repo
+> [`StellarIQLabs/stellariq-contract`](https://github.com/StellarIQLabs/stellariq-contract).
+> This repo builds unsigned transactions via `@stellar/stellar-sdk` and delegates
+> signing to the wallet — it no longer contains a `contracts/` workspace.
 
 Spec source of truth: [`PRD.md`](../PRD.md) (repo root, outside this repo).
 
@@ -13,7 +18,6 @@ stellariq-app/
 ├── apps/
 │   ├── web/            # Next.js 14 dashboard (App Router)
 │   └── api/            # Fastify REST + WebSocket API
-├── contracts/          # Soroban workspace (Rust + stellar-cli)
 ├── packages/
 │   ├── types/          # Shared domain types (Asset, Market, Pool, Swap, Price, Quote…)
 │   ├── schemas/        # Zod request/response schemas (validation at the edge)
@@ -21,22 +25,22 @@ stellariq-app/
 │   └── sdk/            # Typed REST + WebSocket client for wallets, bots, agents
 ├── tests/
 │   └── e2e/            # Playwright end-to-end suite (boots API + web)
-└── .github/workflows/  # CI: quality, tests, build, e2e, contracts, images
+└── .github/workflows/  # CI: quality, tests, build, e2e, images
 ```
 
-Sibling repos: `stellariq-contract` (data & intelligence layer — indexer, price
-engine, analytics, routing; this API mocks it behind a `DataSource` seam until
-its API lands) and `stellariq-infra` (cloud, DB, K8s, CI/CD, image deployment).
+Sibling repos: `stellariq-data` (data & intelligence — indexer, price engine,
+analytics, routing; this API mocks it behind a `DataSource` seam until its API
+lands), `stellariq-contract` (standalone Soroban contracts & deploy scripts), and
+`stellariq-infra` (cloud, DB, K8s, CI/CD, image deployment).
 
 ## Prerequisites
 
-| Tool                           | Version                             | Notes                                                                                    |
-| ------------------------------ | ----------------------------------- | ---------------------------------------------------------------------------------------- |
-| Node.js                        | ≥ 20                                |                                                                                          |
-| pnpm                           | ≥ 9 (`packageManager: pnpm@9.15.9`) | via corepack shims or standalone install                                                 |
-| Rust stable + `stellar` CLI 28 | contracts only                      | `rust-toolchain.toml` pins targets; `pnpm --filter stellariq-contracts toolchain` checks |
-| Docker                         | optional                            | image builds only; daemon not needed for dev                                             |
-| Redis / PostgreSQL             | optional                            | API degrades to in-memory counters + mock data without them                              |
+| Tool               | Version                             | Notes                                                       |
+| ------------------ | ----------------------------------- | ----------------------------------------------------------- |
+| Node.js            | ≥ 20                                |                                                             |
+| pnpm               | ≥ 9 (`packageManager: pnpm@9.15.9`) | via corepack shims or standalone install                    |
+| Docker             | optional                            | image builds only; daemon not needed for dev                |
+| Redis / PostgreSQL | optional                            | API degrades to in-memory counters + mock data without them |
 
 ## Quickstart
 
@@ -70,8 +74,7 @@ Per workspace: `apps/web` (`dev`, `build`, `start`, `typecheck`, `lint`,
 `test` = `vitest run`, `test:watch`), `apps/api` (`dev` via `tsx watch`,
 `build`, `start` = `node dist/index.js`, `typecheck`, `lint`,
 `test` = `node --import tsx --test`), `packages/*` (`build`, `typecheck`,
-`lint`; `ui` adds `storybook`/`build-storybook`, `sdk` adds `test`),
-`contracts` (`toolchain`, `build`, `test`, `lint` = fmt + clippy, `clean`).
+`lint`; `ui` adds `storybook`/`build-storybook`, `sdk` adds `test`). Contracts are in `StellarIQLabs/stellariq-contract`.
 
 ## Web dashboard (`apps/web`)
 
@@ -126,8 +129,7 @@ Redis when `REDIS_URL` is set, otherwise in memory with a startup warning.
 Route handlers depend only on the `DataSource` interface
 (`apps/api/src/data/source.ts`). `MockDataSource` serves deterministic seed
 data (XLM/USDC/EURC/AQUA, 6 markets, 6 pools, 24 swaps); point it at the real
-`stellariq-contract` data API when that lands (`DATA_API_URL`, marked
-`TODO(data)` in code).
+`stellariq-data` API when that lands (`DATA_API_URL`, marked `TODO(data)` in code).
 
 ## Packages
 
@@ -147,14 +149,14 @@ data (XLM/USDC/EURC/AQUA, 6 markets, 6 pools, 24 swaps); point it at the real
   multiplexing and auto-reconnect replay). Usage + examples:
   [`packages/sdk/README.md`](packages/sdk/README.md).
 
-## Contracts (`contracts/`)
+## Contracts (standalone repo)
 
-Soroban workspace scaffolded with `stellar-cli` (`example/` hello-world
-contract proving `cargo test` + `stellar contract build` to WASM).
-`apps/web/src/lib/` holds the integration side: `contracts.ts` (router
+Soroban contracts have moved to [`StellarIQLabs/stellariq-contract`](https://github.com/StellarIQLabs/stellariq-contract)
+(Rust + `stellar-cli`, `example/` hello-world proving `cargo test` + `stellar contract build` to WASM).
+`apps/web/src/lib/` in this repo holds the integration side: `contracts.ts` (router
 interfaces, leg mapping, `StubRouterClient`), `txBuilder.ts` (selected route →
 unsigned XDR via `@stellar/stellar-sdk`), `wallet.ts` + `useWallet` +
-`WalletButton` (Freighter connect/sign, Soroban-RPC submit/poll).
+`WalletButton` (Freighter connect/sign, Soroban-RPC submit/poll). Deploys are driven from the contract repo and `stellariq-infra/scripts/deploy-contracts.sh`.
 
 ## Testing
 
@@ -167,7 +169,7 @@ unsigned XDR via `@stellar/stellar-sdk`), `wallet.ts` + `useWallet` +
   - error mapping, live WS reconnect across server restart).
 - E2E: `pnpm test:e2e` — Playwright (overview, navigation, swap validation)
   against a real API + production web build.
-- Contracts: `pnpm --filter stellariq-contracts test` (+ `lint` = fmt/clippy).
+- Contracts: now in `StellarIQLabs/stellariq-contract` (`cargo test`, `cargo fmt`, `cargo clippy`).
 
 ## Docker
 
@@ -187,9 +189,8 @@ web build time — pass them as build args.
 ## CI
 
 `.github/workflows/ci.yml` (push to `main`, all PRs): Node quality
-(lint+typecheck), Node tests, Node build, Playwright e2e, Soroban contracts
-(toolchain + stellar-cli + fmt/clippy/test/build), then image builds — pushed
-to GHCR on `main` only.
+(lint+typecheck), Node tests, Node build, Playwright e2e, then image builds — pushed
+to GHCR on `main` only. Contract checks run in `StellarIQLabs/stellariq-contract`.
 
 ## Environment reference
 
