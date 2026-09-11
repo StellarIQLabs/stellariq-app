@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --siq-background: #0a0e1a;
+  --siq-surface: #111827;
+  --siq-surface-raised: #1a2340;
+  --siq-border: #243056;
+  --siq-text: #e8ecf8;
+  --siq-text-muted: #8b93b0;
+  --siq-accent: #5b8cff;
+  --siq-positive: #22c55e;
+  --siq-negative: #ef4444;
+  --siq-warning: #f59e0b;
+}
+
+body {
+  background: var(--siq-background);
+  color: var(--siq-text);
+}
