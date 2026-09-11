@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { Badge, Card, Spinner, Table } from '@stellariq/ui';
+import { Badge, Card, Spinner } from '@stellariq/ui';
 import { useOverviewData } from '@/hooks/useOverviewData';
-import { formatCount, formatTime, formatUsd } from '@/lib/format';
+import { formatCount, formatTime } from '@/lib/format';
 import { SummaryStatCards } from './SummaryStatCards';
 import { TopMarketsTable } from './TopMarketsTable';
+import { TopPoolsTable } from './TopPoolsTable';
 
 /**
  * Overview dashboard (PRD §19): Stellar DeFi totals plus sections for top
@@ -37,43 +38,7 @@ export function OverviewDashboard() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         <TopMarketsTable markets={data.markets} />
-
-        <Card
-          title="Top pools"
-          action={
-            <Link href="/pools" className="text-sm text-accent hover:underline">
-              View all
-            </Link>
-          }
-        >
-          <Table
-            columns={[
-              {
-                key: 'pair',
-                header: 'Pool',
-                render: (p) => (
-                  <span className="font-mono">
-                    {p.tokenA}/{p.tokenB}
-                  </span>
-                ),
-              },
-              {
-                key: 'protocol',
-                header: 'Protocol',
-                render: (p) => <Badge tone="accent">{p.protocol}</Badge>,
-              },
-              {
-                key: 'tvl',
-                header: 'TVL',
-                align: 'right',
-                render: (p) => <span className="font-mono">{formatUsd(p.tvl)}</span>,
-              },
-            ]}
-            rows={data.pools}
-            keyOf={(p) => p.id}
-            emptyMessage="No pools indexed yet."
-          />
-        </Card>
+        <TopPoolsTable pools={data.pools} />
       </div>
 
       <Card
