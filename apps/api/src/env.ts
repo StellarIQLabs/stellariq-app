@@ -5,6 +5,10 @@ export interface ApiEnv {
   logLevel: string;
   dataApiUrl: string | null;
   apiKeySalt: string;
+  /** Guards POST /v1/keys. Absent means issuance is disabled. */
+  adminToken: string | null;
+  /** Seeds documented local-dev keys (dev only, never in production). */
+  seedDevKeys: boolean;
 }
 
 function numberOr(name: string, fallback: number): number {
@@ -26,5 +30,7 @@ export function loadEnv(): ApiEnv {
     logLevel: process.env['LOG_LEVEL'] ?? 'info',
     dataApiUrl: process.env['DATA_API_URL'] ?? null,
     apiKeySalt: process.env['API_KEY_SALT'] ?? 'dev-salt-change-in-production',
+    adminToken: process.env['ADMIN_TOKEN'] ?? null,
+    seedDevKeys: process.env['SEED_DEV_KEYS'] === 'true',
   };
 }
