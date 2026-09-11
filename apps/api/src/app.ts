@@ -5,6 +5,7 @@ import type { DataSource } from './data/source.js';
 import { registerRoutes } from './routes/index.js';
 import { registerWsGateway } from './ws/gateway.js';
 import { registerAuth } from './auth/middleware.js';
+import { createRateStore, registerRateLimit } from './auth/rateLimit.js';
 import { KeyStore } from './auth/keys.js';
 import { keyRoutes } from './routes/keys.js';
 import { sendError } from './errors.js';
@@ -40,6 +41,11 @@ export async function buildApp({ env, source }: BuildAppOptions): Promise<Fastif
 
   const keys = new KeyStore(env.apiKeySalt);
   await registerAuth(app, keys);
+  const rateStore = await createRateStore(app, env.redisUrl);
+  await registerRateLimit(app, rateStore);
+  app.addHook('onClose', async () => {
+    await rateStore.close();
+  });
   await keyRoutes(app, keys, env);
   if (env.seedDevKeys) {
     for (const issued of keys.seedDevKeys()) {

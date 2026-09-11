@@ -9,6 +9,8 @@ export interface ApiEnv {
   adminToken: string | null;
   /** Seeds documented local-dev keys (dev only, never in production). */
   seedDevKeys: boolean;
+  /** Redis counters for rate limits. Absent means in-memory counters. */
+  redisUrl: string | null;
 }
 
 function numberOr(name: string, fallback: number): number {
@@ -32,5 +34,6 @@ export function loadEnv(): ApiEnv {
     apiKeySalt: process.env['API_KEY_SALT'] ?? 'dev-salt-change-in-production',
     adminToken: process.env['ADMIN_TOKEN'] ?? null,
     seedDevKeys: process.env['SEED_DEV_KEYS'] === 'true',
+    redisUrl: process.env['REDIS_URL'] ?? null,
   };
 }
