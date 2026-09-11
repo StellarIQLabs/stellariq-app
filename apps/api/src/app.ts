@@ -3,6 +3,7 @@ import cors from '@fastify/cors';
 import type { ApiEnv } from './env.js';
 import type { DataSource } from './data/source.js';
 import { registerRoutes } from './routes/index.js';
+import { registerWsGateway } from './ws/gateway.js';
 import { sendError } from './errors.js';
 
 export interface BuildAppOptions {
@@ -32,6 +33,7 @@ export async function buildApp({ env, source }: BuildAppOptions): Promise<Fastif
   });
 
   await registerRoutes(app, source);
+  await registerWsGateway(app, source);
 
   return app;
 }
