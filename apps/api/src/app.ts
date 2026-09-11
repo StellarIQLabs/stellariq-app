@@ -6,6 +6,7 @@ import { registerRoutes } from './routes/index.js';
 import { registerWsGateway } from './ws/gateway.js';
 import { registerAuth } from './auth/middleware.js';
 import { createRateStore, registerRateLimit } from './auth/rateLimit.js';
+import { MAX_BODY_BYTES, registerSecurity } from './security.js';
 import { KeyStore } from './auth/keys.js';
 import { keyRoutes } from './routes/keys.js';
 import { sendError } from './errors.js';
@@ -17,9 +18,10 @@ export interface BuildAppOptions {
 
 /** Fastify application factory (injectable source keeps routes testable). */
 export async function buildApp({ env, source }: BuildAppOptions): Promise<FastifyInstance> {
-  const app = Fastify({ logger: { level: env.logLevel } });
+  const app = Fastify({ logger: { level: env.logLevel }, bodyLimit: MAX_BODY_BYTES });
 
   await app.register(cors, { origin: true });
+  await registerSecurity(app);
 
   app.setErrorHandler((err, _request, reply) => {
     app.log.error(err);

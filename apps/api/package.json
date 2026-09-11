@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@fastify/cors": "11.1.0",
+    "@fastify/helmet": "13.0.2",
     "@fastify/websocket": "11.2.0",
     "@stellariq/schemas": "workspace:^",
     "@stellariq/types": "workspace:^",
