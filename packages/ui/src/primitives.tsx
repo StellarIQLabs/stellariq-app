@@ -4,9 +4,9 @@ import { clsx } from 'clsx';
 export interface StatProps {
   label: string;
   value: ReactNode;
-  change?: number;
+  change?: number | undefined;
   loading?: boolean;
-  error?: string;
+  error?: string | undefined;
   hint?: string;
 }
 

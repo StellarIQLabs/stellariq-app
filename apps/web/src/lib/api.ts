@@ -1,4 +1,4 @@
-import type { Asset, Market, Pool, Swap } from '@stellariq/types';
+import type { Asset, AssetWithMarket, Market, OhlcvCandle, Pool, Swap } from '@stellariq/types';
 import { getWebEnv } from './env';
 
 export class ApiError extends Error {
@@ -113,6 +113,19 @@ export function fetchAssets(filters: AssetFilters, signal?: AbortSignal): Promis
 }
 
 /** Single asset with market context (PRD §17 assets). */
-export function fetchAsset(asset: string, signal?: AbortSignal): Promise<Asset> {
-  return request<Asset>(`/v1/assets/${encodeURIComponent(asset)}`, signal);
+export function fetchAsset(asset: string, signal?: AbortSignal): Promise<AssetWithMarket> {
+  return request<AssetWithMarket>(`/v1/assets/${encodeURIComponent(asset)}`, signal);
+}
+
+/** OHLCV price history for charts (PRD §17 prices). */
+export function fetchPriceHistory(
+  asset: string,
+  timeframe = '1D',
+  signal?: AbortSignal,
+): Promise<OhlcvCandle[]> {
+  const params = new URLSearchParams({ timeframe });
+  return request<unknown>(
+    `/v1/prices/${encodeURIComponent(asset)}/history?${params.toString()}`,
+    signal,
+  ).then(asArray<OhlcvCandle>);
 }
