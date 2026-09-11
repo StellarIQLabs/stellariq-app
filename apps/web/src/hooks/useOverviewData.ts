@@ -1,13 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import type { Market, Pool, Swap } from '@stellariq/types';
-import { ApiError, fetchRecentSwaps, fetchTopMarkets, fetchTopPools } from '@/lib/api';
+import type { Market, Pool } from '@stellariq/types';
+import { ApiError, fetchTopMarkets, fetchTopPools } from '@/lib/api';
 
 export interface OverviewData {
   markets: Market[];
   pools: Pool[];
-  swaps: Swap[];
 }
 
 export interface OverviewState {
@@ -25,14 +24,10 @@ export function useOverviewData(): OverviewState {
     const { signal } = controller;
     setState({ data: null, loading: true, error: null });
 
-    Promise.all([
-      fetchTopMarkets(5, signal),
-      fetchTopPools(5, signal),
-      fetchRecentSwaps(10, signal),
-    ])
-      .then(([markets, pools, swaps]) => {
+    Promise.all([fetchTopMarkets(5, signal), fetchTopPools(5, signal)])
+      .then(([markets, pools]) => {
         if (!signal.aborted) {
-          setState({ data: { markets, pools, swaps }, loading: false, error: null });
+          setState({ data: { markets, pools }, loading: false, error: null });
         }
       })
       .catch((err: unknown) => {

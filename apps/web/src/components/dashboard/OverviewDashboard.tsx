@@ -1,18 +1,15 @@
 'use client';
 
-import Link from 'next/link';
-import { Badge, Card, Spinner } from '@stellariq/ui';
+import { Card, Spinner } from '@stellariq/ui';
 import { useOverviewData } from '@/hooks/useOverviewData';
-import { formatCount, formatTime } from '@/lib/format';
 import { SummaryStatCards } from './SummaryStatCards';
 import { TopMarketsTable } from './TopMarketsTable';
 import { TopPoolsTable } from './TopPoolsTable';
+import { LargeSwapsFeed } from './LargeSwapsFeed';
 
 /**
  * Overview dashboard (PRD §19): Stellar DeFi totals plus sections for top
- * markets, top pools and large swaps. Each section handles loading, error and
- * empty states; dedicated components (stat cards, sortable tables, live feed)
- * replace these generic renderings in later dashboard tasks.
+ * markets, top pools and the live large-swaps feed.
  */
 export function OverviewDashboard() {
   const { data, loading, error } = useOverviewData();
@@ -41,33 +38,7 @@ export function OverviewDashboard() {
         <TopPoolsTable pools={data.pools} />
       </div>
 
-      <Card
-        title="Large swaps"
-        action={
-          <Link href="/markets" className="text-sm text-accent hover:underline">
-            Explore markets
-          </Link>
-        }
-      >
-        {data.swaps.length === 0 ? (
-          <p className="py-4 text-center text-sm text-muted">No swaps observed yet.</p>
-        ) : (
-          <ul className="divide-y divide-border/50">
-            {data.swaps.slice(0, 6).map((swap) => (
-              <li key={swap.id} className="flex items-center gap-3 py-2.5 text-sm">
-                {swap.isLarge && <Badge tone="warning">Whale</Badge>}
-                <span className="font-mono">
-                  {formatCount(swap.inputAmount)} {swap.inputAsset} →{' '}
-                  {formatCount(swap.outputAmount)} {swap.outputAsset}
-                </span>
-                <span className="ml-auto shrink-0 font-mono text-xs text-muted">
-                  {formatTime(swap.timestamp)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+      <LargeSwapsFeed />
     </div>
   );
 }
