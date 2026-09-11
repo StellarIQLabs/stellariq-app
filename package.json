@@ -13,11 +13,31 @@
     "lint": "pnpm -r --if-present lint",
     "typecheck": "pnpm -r --if-present typecheck",
     "test": "pnpm -r --if-present test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepare": "husky",
     "dev:web": "pnpm --filter @stellariq/web dev",
     "dev:api": "pnpm --filter @stellariq/api dev"
   },
+  "lint-staged": {
+    "*.{ts,tsx,js,mjs,cjs}": [
+      "prettier --write"
+    ],
+    "apps/*/src/**/*.{ts,tsx}": [
+      "eslint --fix"
+    ],
+    "packages/*/src/**/*.{ts,tsx}": [
+      "eslint --fix"
+    ],
+    "*.{json,yaml,yml,md}": [
+      "prettier --write"
+    ]
+  },
   "devDependencies": {
     "@types/node": "22",
+    "husky": "9.1.7",
+    "lint-staged": "16.2.7",
+    "prettier": "3.6.2",
     "typescript": "^5.6.3"
   }
 }

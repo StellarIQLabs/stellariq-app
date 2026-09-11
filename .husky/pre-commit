@@ -1,0 +1,3 @@
+# Make pnpm resolvable when installed via corepack shims or other non-PATH locations.
+export PATH="/usr/lib/node_modules/corepack/shims:$HOME/.local/share/pnpm:$HOME/.local/bin:$PATH"
+pnpm lint-staged --concurrent 1
