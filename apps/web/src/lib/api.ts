@@ -5,6 +5,8 @@ import type {
   Market,
   OhlcvCandle,
   Pool,
+  Quote,
+  RoutesResponse,
   Swap,
 } from '@stellariq/types';
 import { getWebEnv } from './env';
@@ -229,4 +231,30 @@ export function fetchPriceHistory(
     `/v1/prices/${encodeURIComponent(asset)}/history?${params.toString()}`,
     signal,
   ).then(asArray<OhlcvCandle>);
+}
+
+export interface QuoteRequest {
+  from: string;
+  to: string;
+  amount: number;
+}
+
+/** Best execution for a given input (PRD §17 quotes). */
+export function fetchQuote(req: QuoteRequest, signal?: AbortSignal): Promise<Quote> {
+  const params = new URLSearchParams({
+    from: req.from,
+    to: req.to,
+    amount: String(req.amount),
+  });
+  return request<Quote>(`/v1/quote?${params.toString()}`, signal);
+}
+
+/** Every evaluated route ranked by net output (PRD §17 routes). */
+export function fetchRoutes(req: QuoteRequest, signal?: AbortSignal): Promise<RoutesResponse> {
+  const params = new URLSearchParams({
+    from: req.from,
+    to: req.to,
+    amount: String(req.amount),
+  });
+  return request<RoutesResponse>(`/v1/routes?${params.toString()}`, signal);
 }
