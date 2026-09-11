@@ -76,8 +76,14 @@ export function fetchVolumeSeries(signal?: AbortSignal): Promise<AnalyticsSeries
 }
 
 /** Liquidity series; the latest point is current TVL (PRD §17 analytics). */
-export function fetchLiquiditySeries(signal?: AbortSignal): Promise<AnalyticsSeries> {
-  return request<AnalyticsSeries>('/v1/analytics/liquidity?timeframe=1D', signal);
+export function fetchLiquiditySeries(
+  options: { asset?: string; signal?: AbortSignal } = {},
+): Promise<AnalyticsSeries> {
+  const params = new URLSearchParams({ timeframe: '1D' });
+  if (options.asset) {
+    params.set('asset', options.asset);
+  }
+  return request<AnalyticsSeries>(`/v1/analytics/liquidity?${params.toString()}`, options.signal);
 }
 
 export interface SwapsPage {

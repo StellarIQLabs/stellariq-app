@@ -55,7 +55,7 @@ export function SummaryStatCards() {
         }
       });
 
-    fetchLiquiditySeries(signal)
+    fetchLiquiditySeries({ signal })
       .then((series) => {
         if (signal.aborted) {
           return;

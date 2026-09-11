@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Badge, BarsChart, Card, Spinner, Stat } from '@stellariq/ui';
+import { useEffect, useState } from 'react';
+import { Badge, Card, Spinner, Stat } from '@stellariq/ui';
 import type { AggregatedMarket, OhlcvCandle, Swap, Timeframe } from '@stellariq/types';
 import { ApiError, fetchMarket, fetchPriceHistory, fetchRecentSwaps } from '@/lib/api';
 import { formatChange, formatCount, formatPrice, formatTime, formatUsd } from '@/lib/format';
 import { MarketPriceChart } from '@/components/charts/MarketPriceChart';
+import { MarketHistoryCharts } from '@/components/charts/MarketHistoryCharts';
 
 function pairAssets(pair: string): [string, string] {
   const [base = '', quote = ''] = pair.split('/');
@@ -63,11 +64,6 @@ export function MarketDetail({ pair }: { pair: string }) {
     return () => controller.abort();
   }, [pair, timeframe]);
 
-  const volumes = useMemo(
-    () => candles.map((c) => ({ timestamp: c.timestamp, value: c.volume })),
-    [candles],
-  );
-
   if (loading) {
     return <Spinner label={`Loading ${pair}…`} />;
   }
@@ -109,10 +105,14 @@ export function MarketDetail({ pair }: { pair: string }) {
         onTimeframeChange={setTimeframe}
       />
 
+      <MarketHistoryCharts
+        pair={market.id}
+        baseAsset={market.baseAsset}
+        candles={candles}
+        timeframe={timeframe}
+      />
+
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Volume history">
-          <BarsChart data={volumes} label={`${market.id} volume (${timeframe})`} />
-        </Card>
         <Card title="Liquidity by source">
           {market.sources.length === 0 ? (
             <p className="py-4 text-center text-sm text-muted">No protocol sources reported.</p>
@@ -131,27 +131,27 @@ export function MarketDetail({ pair }: { pair: string }) {
             </ul>
           )}
         </Card>
-      </div>
 
-      <Card title="Recent trades">
-        {swaps.length === 0 ? (
-          <p className="py-4 text-center text-sm text-muted">No recent trades for this pair.</p>
-        ) : (
-          <ul className="divide-y divide-border/50">
-            {swaps.slice(0, 10).map((swap) => (
-              <li key={swap.id} className="flex items-center gap-3 py-2 text-sm">
-                <span className="font-mono">
-                  {formatCount(swap.inputAmount)} {swap.inputAsset} →{' '}
-                  {formatCount(swap.outputAmount)} {swap.outputAsset}
-                </span>
-                <span className="ml-auto font-mono text-xs text-muted">
-                  {formatTime(swap.timestamp)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Card>
+        <Card title="Recent trades">
+          {swaps.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted">No recent trades for this pair.</p>
+          ) : (
+            <ul className="divide-y divide-border/50">
+              {swaps.slice(0, 10).map((swap) => (
+                <li key={swap.id} className="flex items-center gap-3 py-2 text-sm">
+                  <span className="font-mono">
+                    {formatCount(swap.inputAmount)} {swap.inputAsset} →{' '}
+                    {formatCount(swap.outputAmount)} {swap.outputAsset}
+                  </span>
+                  <span className="ml-auto font-mono text-xs text-muted">
+                    {formatTime(swap.timestamp)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
     </div>
   );
 }
