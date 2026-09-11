@@ -1,2 +1,2 @@
-// Placeholder entry point — real REST/WS client lands in the SDK tasks.
-export {};
+/** @stellariq/sdk — typed client for the StellarIQ REST and WebSocket APIs. */
+export * from './client.js';

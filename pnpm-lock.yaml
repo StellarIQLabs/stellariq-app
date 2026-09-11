@@ -171,6 +171,10 @@ importers:
         version: 3.6.2
 
   packages/sdk:
+    dependencies:
+      '@stellariq/types':
+        specifier: workspace:^
+        version: link:../types
     devDependencies:
       '@typescript-eslint/eslint-plugin':
         specifier: 8.46.2
