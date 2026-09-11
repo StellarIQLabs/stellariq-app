@@ -10,6 +10,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "@stellariq/schemas": "workspace:^",
+    "@stellariq/sdk": "workspace:^",
+    "@stellariq/types": "workspace:^",
+    "@stellariq/ui": "workspace:^",
     "next": "14.2.35",
     "react": "18.3.1",
     "react-dom": "18.3.1"
@@ -20,7 +24,10 @@
     "@types/react-dom": "18",
     "@typescript-eslint/eslint-plugin": "8.46.2",
     "@typescript-eslint/parser": "8.46.2",
+    "autoprefixer": "10.4.20",
     "eslint": "8.57.1",
-    "prettier": "3.6.2"
+    "postcss": "8.5.3",
+    "prettier": "3.6.2",
+    "tailwindcss": "3.4.17"
   }
 }

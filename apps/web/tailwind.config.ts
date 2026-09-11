@@ -1,10 +1,9 @@
 import type { Config } from 'tailwindcss';
-import { stellariqPreset } from './src/preset.js';
+import { stellariqPreset } from '@stellariq/ui';
 
 const config: Config = {
   content: ['./src/**/*.{ts,tsx}'],
   presets: [stellariqPreset as Config],
-  plugins: [],
 };
 
 export default config;

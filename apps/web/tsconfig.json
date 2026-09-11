@@ -12,11 +12,7 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      "@stellariq/types": ["../../packages/types/src/index.ts"],
-      "@stellariq/schemas": ["../../packages/schemas/src/index.ts"],
-      "@stellariq/ui": ["../../packages/ui/src/index.ts"],
-      "@stellariq/sdk": ["../../packages/sdk/src/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["next-env.d.ts", "next.config.*", "src/**/*", ".next/types/**/*.ts"],
