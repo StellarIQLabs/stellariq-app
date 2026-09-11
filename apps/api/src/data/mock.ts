@@ -395,8 +395,13 @@ export class MockDataSource implements DataSource {
     return paginate(filtered, opts);
   }
 
-  recentSwaps(limit: number): Swap[] {
-    return SWAPS.slice(0, limit);
+  recentSwaps(limit: number, filters?: { asset?: string; protocol?: Protocol }): Swap[] {
+    const filtered = SWAPS.filter(
+      (s) =>
+        (!filters?.asset || s.inputAsset === filters.asset || s.outputAsset === filters.asset) &&
+        (!filters?.protocol || s.protocol === filters.protocol),
+    );
+    return filtered.slice(0, limit);
   }
 
   swapsTotal(): number {

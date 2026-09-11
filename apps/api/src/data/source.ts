@@ -48,7 +48,7 @@ export interface DataSource {
   listSwaps(
     opts: { asset?: string; pool?: string; protocol?: Protocol } & ListOptions,
   ): Paged<Swap>;
-  recentSwaps(limit: number): Swap[];
+  recentSwaps(limit: number, filters?: { asset?: string; protocol?: Protocol }): Swap[];
   swapsTotal(): number;
   getPrice(asset: string): Price | null;
   priceHistory(asset: string, timeframe: Timeframe): OhlcvCandle[];

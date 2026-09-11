@@ -5,6 +5,7 @@ import { assetRoutes } from './assets.js';
 import { priceRoutes } from './prices.js';
 import { marketRoutes } from './markets.js';
 import { poolRoutes } from './pools.js';
+import { swapRoutes } from './swaps.js';
 
 /** A domain route module: registers its endpoints against the app. */
 export type RouteModule = (app: FastifyInstance, source: DataSource) => void | Promise<void>;
@@ -19,6 +20,7 @@ export const routeModules: RouteModule[] = [
   priceRoutes,
   marketRoutes,
   poolRoutes,
+  swapRoutes,
 ];
 
 export async function registerRoutes(app: FastifyInstance, source: DataSource): Promise<void> {
