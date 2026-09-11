@@ -1,5 +1,14 @@
 {
   "name": "stellariq-contracts",
   "version": "0.1.0",
-  "private": true
+  "private": true,
+  "description": "StellarIQ Soroban contracts workspace (Rust toolchain + stellar-cli).",
+  "stellarCli": "28.0.0",
+  "scripts": {
+    "toolchain": "rustc --version && cargo --version && stellar --version",
+    "build": "stellar contract build --manifest-path example/Cargo.toml",
+    "test": "cargo test --manifest-path example/Cargo.toml",
+    "lint": "cargo fmt --check --manifest-path example/Cargo.toml && cargo clippy --manifest-path example/Cargo.toml -- -D warnings",
+    "clean": "cargo clean"
+  }
 }
