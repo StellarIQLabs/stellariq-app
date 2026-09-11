@@ -50,3 +50,36 @@ export function fetchTopPools(limit = 5, signal?: AbortSignal): Promise<Pool[]> 
 export function fetchRecentSwaps(limit = 10, signal?: AbortSignal): Promise<Swap[]> {
   return request<unknown>(`/v1/swaps/recent?limit=${limit}`, signal).then(asArray<Swap>);
 }
+
+export interface AnalyticsPoint {
+  timestamp: number;
+  value: number;
+}
+
+export interface AnalyticsSeries {
+  metric: 'volume' | 'liquidity';
+  timeframe: string;
+  points: AnalyticsPoint[];
+}
+
+/** 24h volume series for the network totals (PRD §17 analytics). */
+export function fetchVolumeSeries(signal?: AbortSignal): Promise<AnalyticsSeries> {
+  return request<AnalyticsSeries>('/v1/analytics/volume?timeframe=1D', signal);
+}
+
+/** Liquidity series; the latest point is current TVL (PRD §17 analytics). */
+export function fetchLiquiditySeries(signal?: AbortSignal): Promise<AnalyticsSeries> {
+  return request<AnalyticsSeries>('/v1/analytics/liquidity?timeframe=1D', signal);
+}
+
+export interface SwapsPage {
+  data: Swap[];
+  page: number;
+  limit: number;
+  total: number;
+}
+
+/** Total indexed swap count via a minimal page fetch (PRD §17 swaps). */
+export function fetchSwapsTotal(signal?: AbortSignal): Promise<number> {
+  return request<SwapsPage>('/v1/swaps?page=1&limit=1', signal).then((page) => page.total);
+}

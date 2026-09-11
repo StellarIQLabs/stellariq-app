@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { Badge, Card, Spinner, Stat, Table } from '@stellariq/ui';
+import { Badge, Card, Spinner, Table } from '@stellariq/ui';
 import { useOverviewData } from '@/hooks/useOverviewData';
 import { formatChange, formatCount, formatPrice, formatTime, formatUsd } from '@/lib/format';
+import { SummaryStatCards } from './SummaryStatCards';
 
 /**
  * Overview dashboard (PRD §19): Stellar DeFi totals plus sections for top
@@ -29,17 +30,9 @@ export function OverviewDashboard() {
     );
   }
 
-  const topVolume = data.markets.reduce((sum, m) => sum + (m.volume24h ?? 0), 0);
-  const topTvl = data.pools.reduce((sum, p) => sum + p.tvl, 0);
-  const whaleCount = data.swaps.filter((s) => s.isLarge).length;
-
   return (
     <div className="flex flex-col gap-6">
-      <section aria-label="DeFi totals" className="grid gap-4 md:grid-cols-3">
-        <Stat label="Top markets volume 24h" value={formatUsd(topVolume)} />
-        <Stat label="Top pools TVL" value={formatUsd(topTvl)} />
-        <Stat label="Whale swaps spotted" value={formatCount(whaleCount)} />
-      </section>
+      <SummaryStatCards />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card
