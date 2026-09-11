@@ -2,11 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { Badge, Card, Spinner, Stat } from '@stellariq/ui';
-import type { AggregatedMarket, OhlcvCandle, Swap, Timeframe } from '@stellariq/types';
-import { ApiError, fetchMarket, fetchPriceHistory, fetchRecentSwaps } from '@/lib/api';
-import { formatChange, formatCount, formatPrice, formatTime, formatUsd } from '@/lib/format';
+import type { AggregatedMarket, OhlcvCandle, Timeframe } from '@stellariq/types';
+import { ApiError, fetchMarket, fetchPriceHistory } from '@/lib/api';
+import { formatChange, formatCount, formatPrice, formatUsd } from '@/lib/format';
 import { MarketPriceChart } from '@/components/charts/MarketPriceChart';
 import { MarketHistoryCharts } from '@/components/charts/MarketHistoryCharts';
+import { RecentTradesTable } from '@/components/trades/RecentTradesTable';
 
 function pairAssets(pair: string): [string, string] {
   const [base = '', quote = ''] = pair.split('/');
@@ -14,14 +15,12 @@ function pairAssets(pair: string): [string, string] {
 }
 
 /**
- * Market detail shell (PRD §20): price header, timeframe tabs and sections
- * for chart, volume, liquidity and trades. Dedicated chart and trades
- * components take over these sections in later tasks.
+ * Market detail (PRD §20): price header, timeframe tabs and sections for
+ * chart, volume, liquidity and trades.
  */
 export function MarketDetail({ pair }: { pair: string }) {
   const [market, setMarket] = useState<AggregatedMarket | null>(null);
   const [candles, setCandles] = useState<OhlcvCandle[]>([]);
-  const [swaps, setSwaps] = useState<Swap[]>([]);
   const [timeframe, setTimeframe] = useState<Timeframe>('1D');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,24 +28,13 @@ export function MarketDetail({ pair }: { pair: string }) {
   useEffect(() => {
     const controller = new AbortController();
     const { signal } = controller;
-    const [base, quote] = pairAssets(pair);
+    const [base] = pairAssets(pair);
     setLoading(true);
-    Promise.all([
-      fetchMarket(pair, signal),
-      fetchPriceHistory(base || pair, timeframe, signal),
-      fetchRecentSwaps(50, signal),
-    ])
-      .then(([fetchedMarket, history, recent]) => {
+    Promise.all([fetchMarket(pair, signal), fetchPriceHistory(base || pair, timeframe, signal)])
+      .then(([fetchedMarket, history]) => {
         if (!signal.aborted) {
           setMarket(fetchedMarket);
           setCandles(history);
-          setSwaps(
-            recent.filter(
-              (s) =>
-                (s.inputAsset === base && s.outputAsset === quote) ||
-                (s.inputAsset === quote && s.outputAsset === base),
-            ),
-          );
           setError(null);
           setLoading(false);
         }
@@ -132,25 +120,7 @@ export function MarketDetail({ pair }: { pair: string }) {
           )}
         </Card>
 
-        <Card title="Recent trades">
-          {swaps.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted">No recent trades for this pair.</p>
-          ) : (
-            <ul className="divide-y divide-border/50">
-              {swaps.slice(0, 10).map((swap) => (
-                <li key={swap.id} className="flex items-center gap-3 py-2 text-sm">
-                  <span className="font-mono">
-                    {formatCount(swap.inputAmount)} {swap.inputAsset} →{' '}
-                    {formatCount(swap.outputAmount)} {swap.outputAsset}
-                  </span>
-                  <span className="ml-auto font-mono text-xs text-muted">
-                    {formatTime(swap.timestamp)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
+        <RecentTradesTable pair={market.id} />
       </div>
     </div>
   );

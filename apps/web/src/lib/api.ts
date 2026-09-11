@@ -98,6 +98,31 @@ export function fetchSwapsTotal(signal?: AbortSignal): Promise<number> {
   return request<SwapsPage>('/v1/swaps?page=1&limit=1', signal).then((page) => page.total);
 }
 
+export interface SwapFilters {
+  asset?: string;
+  pool?: string;
+  protocol?: string;
+  page?: number;
+  limit?: number;
+}
+
+/** Paginated swaps filtered by asset, pool or protocol (PRD §17 swaps). */
+export function fetchSwaps(filters: SwapFilters, signal?: AbortSignal): Promise<SwapsPage> {
+  const params = new URLSearchParams();
+  if (filters.asset) {
+    params.set('asset', filters.asset);
+  }
+  if (filters.pool) {
+    params.set('pool', filters.pool);
+  }
+  if (filters.protocol) {
+    params.set('protocol', filters.protocol);
+  }
+  params.set('page', String(filters.page ?? 1));
+  params.set('limit', String(filters.limit ?? 20));
+  return request<SwapsPage>(`/v1/swaps?${params.toString()}`, signal);
+}
+
 export interface PoolFilters {
   protocol?: string;
   sort?: 'tvl' | 'volume';
