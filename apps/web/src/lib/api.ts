@@ -1,4 +1,4 @@
-import type { Market, Pool, Swap } from '@stellariq/types';
+import type { Asset, Market, Pool, Swap } from '@stellariq/types';
 import { getWebEnv } from './env';
 
 export class ApiError extends Error {
@@ -82,4 +82,37 @@ export interface SwapsPage {
 /** Total indexed swap count via a minimal page fetch (PRD §17 swaps). */
 export function fetchSwapsTotal(signal?: AbortSignal): Promise<number> {
   return request<SwapsPage>('/v1/swaps?page=1&limit=1', signal).then((page) => page.total);
+}
+
+export interface AssetFilters {
+  search?: string;
+  verifiedOnly?: boolean;
+  page?: number;
+  limit?: number;
+}
+
+export interface AssetPage {
+  data: Asset[];
+  page: number;
+  limit: number;
+  total: number;
+}
+
+/** Searchable, filterable asset registry page (PRD §17 assets). */
+export function fetchAssets(filters: AssetFilters, signal?: AbortSignal): Promise<AssetPage> {
+  const params = new URLSearchParams();
+  if (filters.search) {
+    params.set('search', filters.search);
+  }
+  if (filters.verifiedOnly === true) {
+    params.set('verified', 'true');
+  }
+  params.set('page', String(filters.page ?? 1));
+  params.set('limit', String(filters.limit ?? 20));
+  return request<AssetPage>(`/v1/assets?${params.toString()}`, signal);
+}
+
+/** Single asset with market context (PRD §17 assets). */
+export function fetchAsset(asset: string, signal?: AbortSignal): Promise<Asset> {
+  return request<Asset>(`/v1/assets/${encodeURIComponent(asset)}`, signal);
 }
