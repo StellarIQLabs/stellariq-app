@@ -1,4 +1,12 @@
-import type { Asset, AssetWithMarket, Market, OhlcvCandle, Pool, Swap } from '@stellariq/types';
+import type {
+  AggregatedMarket,
+  Asset,
+  AssetWithMarket,
+  Market,
+  OhlcvCandle,
+  Pool,
+  Swap,
+} from '@stellariq/types';
 import { getWebEnv } from './env';
 
 export class ApiError extends Error {
@@ -141,6 +149,11 @@ export function fetchMarkets(filters: MarketFilters, signal?: AbortSignal): Prom
   params.set('page', String(filters.page ?? 1));
   params.set('limit', String(filters.limit ?? 20));
   return request<MarketPage>(`/v1/markets?${params.toString()}`, signal);
+}
+
+/** Aggregated pair view across protocols (PRD §17 markets). */
+export function fetchMarket(pair: string, signal?: AbortSignal): Promise<AggregatedMarket> {
+  return request<AggregatedMarket>(`/v1/markets/${encodeURIComponent(pair)}`, signal);
 }
 
 /** OHLCV price history for charts (PRD §17 prices). */
