@@ -1,0 +1,148 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_TELEMETRY_DISABLED: 1
+
+jobs:
+  node-quality:
+    name: Lint and typecheck (Node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r --filter=!stellariq-contracts --if-present lint
+      - run: pnpm -r --filter=!stellariq-contracts --if-present typecheck
+
+  node-test:
+    name: Unit and integration tests (Node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @stellariq/web test
+      - run: pnpm --filter @stellariq/api test
+      - run: pnpm --filter @stellariq/sdk test
+
+  node-build:
+    name: Build (Node)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r --filter=!stellariq-contracts build
+
+  e2e:
+    name: Playwright e2e
+    runs-on: ubuntu-latest
+    needs: [node-build]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r --filter=!stellariq-contracts build
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+
+  contracts:
+    name: Soroban contracts
+    runs-on: ubuntu-latest
+    env:
+      STELLAR_CLI_VERSION: 28.0.0
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown,wasm32v1-none
+          components: rustfmt, clippy
+      - name: Install stellar-cli
+        run: |
+          curl -sL -o /tmp/stellar-cli.tar.gz "https://github.com/stellar/stellar-cli/releases/download/v${STELLAR_CLI_VERSION}/stellar-cli-${STELLAR_CLI_VERSION}-x86_64-unknown-linux-gnu.tar.gz"
+          tar -xzf /tmp/stellar-cli.tar.gz -C /usr/local/bin
+          stellar --version
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter stellariq-contracts lint
+      - run: pnpm --filter stellariq-contracts test
+      - run: pnpm --filter stellariq-contracts build
+
+  docker:
+    name: Build and push images
+    runs-on: ubuntu-latest
+    needs: [node-quality, node-test, contracts]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        if: github.event_name == 'push'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/metadata-action@v5
+        id: meta-web
+        with:
+          images: ghcr.io/${{ github.repository }}/web
+      - uses: docker/metadata-action@v5
+        id: meta-api
+        with:
+          images: ghcr.io/${{ github.repository }}/api
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta-web.outputs.tags }}
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=https://api.stellariq.example
+            NEXT_PUBLIC_WS_URL=wss://api.stellariq.example/ws
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: apps/api/Dockerfile
+          push: ${{ github.event_name == 'push' }}
+          tags: ${{ steps.meta-api.outputs.tags }}
