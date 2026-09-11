@@ -26,9 +26,10 @@ function send(socket: { send: (data: string) => void }, payload: unknown): void 
 
 /**
  * WebSocket gateway (PRD §18): `socket.subscribe("XLM/USDC:price")` style
- * subscriptions over JSON `{ action, channel }` messages, pushing
- * `{ type: "price_update", pair, price, timestamp }` events with heartbeat.
- * Trades and liquidity topics stream in the subscriptions task.
+ * subscriptions over JSON `{ action, channel }` messages. Price, trades and
+ * liquidity topics stream on a shared ticker; protocol ping plus an
+ * application-level ping/pong keep load-balanced connections alive, and every
+ * close clears its timers so clients can reconnect cleanly.
  */
 export async function registerWsGateway(app: FastifyInstance, source: DataSource): Promise<void> {
   await app.register(fastifyWebsocket);
@@ -36,26 +37,55 @@ export async function registerWsGateway(app: FastifyInstance, source: DataSource
   app.get('/ws', { websocket: true }, (socket) => {
     const subscriptions = new Set<string>();
 
-    const pushPrice = (channel: string): void => {
+    const pushUpdate = (channel: string): void => {
       const split = splitChannel(channel);
-      if (!split || split.topic !== 'price') {
+      if (!split) {
+        return;
+      }
+      const now = Math.floor(Date.now() / 1000);
+      if (split.topic === 'price') {
+        const market = source.getMarket(split.pair);
+        if (market?.price === undefined) {
+          return;
+        }
+        send(socket, {
+          type: 'price_update',
+          pair: split.pair,
+          price: market.price,
+          timestamp: now,
+        });
+        return;
+      }
+      if (split.topic === 'trades') {
+        const [base = '', quote = ''] = split.pair.split('/');
+        const latest = source
+          .recentSwaps(10)
+          .find(
+            (s) =>
+              (s.inputAsset === base && s.outputAsset === quote) ||
+              (s.inputAsset === quote && s.outputAsset === base),
+          );
+        if (!latest) {
+          return;
+        }
+        send(socket, { type: 'trade_update', pair: split.pair, swap: latest, timestamp: now });
         return;
       }
       const market = source.getMarket(split.pair);
-      if (market?.price === undefined) {
+      if (market?.liquidity === undefined) {
         return;
       }
       send(socket, {
-        type: 'price_update',
+        type: 'liquidity_update',
         pair: split.pair,
-        price: market.price,
-        timestamp: Math.floor(Date.now() / 1000),
+        liquidity: market.liquidity,
+        timestamp: now,
       });
     };
 
     const ticker = setInterval(() => {
       for (const channel of subscriptions) {
-        pushPrice(channel);
+        pushUpdate(channel);
       }
     }, PRICE_TICK_MS);
 
@@ -72,8 +102,12 @@ export async function registerWsGateway(app: FastifyInstance, source: DataSource
         send(socket, { type: 'error', message: 'Message must be JSON.' });
         return;
       }
+      if (message.action === 'ping') {
+        send(socket, { type: 'pong', timestamp: Math.floor(Date.now() / 1000) });
+        return;
+      }
       if (message.action !== 'subscribe' && message.action !== 'unsubscribe') {
-        send(socket, { type: 'error', message: 'Unknown action. Use subscribe|unsubscribe.' });
+        send(socket, { type: 'error', message: 'Unknown action. Use subscribe|unsubscribe|ping.' });
         return;
       }
       if (typeof message.channel !== 'string' || splitChannel(message.channel) === null) {
@@ -86,7 +120,7 @@ export async function registerWsGateway(app: FastifyInstance, source: DataSource
       if (message.action === 'subscribe') {
         subscriptions.add(message.channel);
         send(socket, { type: 'subscribed', channel: message.channel });
-        pushPrice(message.channel);
+        pushUpdate(message.channel);
       } else {
         subscriptions.delete(message.channel);
         send(socket, { type: 'unsubscribed', channel: message.channel });
