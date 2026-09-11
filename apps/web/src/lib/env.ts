@@ -7,6 +7,8 @@ export interface WebEnv {
   wsUrl: string;
   stellarNetwork: string;
   horizonUrl: string;
+  /** Soroban RPC endpoint used to submit wallet-signed transactions. */
+  sorobanRpcUrl: string;
   /** Swap-router contract id. Undefined until the contract is deployed. */
   swapRouterId?: string;
 }
@@ -38,6 +40,7 @@ export function getWebEnv(): WebEnv {
     wsUrl: required('NEXT_PUBLIC_WS_URL', 'ws://localhost:4000/ws'),
     stellarNetwork: required('NEXT_PUBLIC_STELLAR_NETWORK', 'testnet'),
     horizonUrl: required('NEXT_PUBLIC_HORIZON_URL', 'https://horizon-testnet.stellar.org'),
+    sorobanRpcUrl: required('NEXT_PUBLIC_SOROBAN_RPC_URL', 'https://soroban-testnet.stellar.org'),
     ...optionalEnv('NEXT_PUBLIC_SWAP_ROUTER_ID', 'swapRouterId'),
   };
   return cached;
