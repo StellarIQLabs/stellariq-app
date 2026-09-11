@@ -3,15 +3,11 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
     "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "paths": {
-      "@stellariq/types": ["../../packages/types/src/index.ts"],
-      "@stellariq/schemas": ["../../packages/schemas/src/index.ts"]
-    }
+    "noUnusedParameters": false
   },
   "include": ["src/**/*"],
   "exclude": ["**/*.test.ts", "**/*.spec.ts"]
