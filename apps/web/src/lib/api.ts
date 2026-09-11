@@ -117,6 +117,32 @@ export function fetchAsset(asset: string, signal?: AbortSignal): Promise<AssetWi
   return request<AssetWithMarket>(`/v1/assets/${encodeURIComponent(asset)}`, signal);
 }
 
+export interface MarketFilters {
+  protocol?: string;
+  sort?: 'volume' | 'liquidity' | 'change';
+  page?: number;
+  limit?: number;
+}
+
+export interface MarketPage {
+  data: Market[];
+  page: number;
+  limit: number;
+  total: number;
+}
+
+/** Paginated base/quote market catalog (PRD §17 markets). */
+export function fetchMarkets(filters: MarketFilters, signal?: AbortSignal): Promise<MarketPage> {
+  const params = new URLSearchParams();
+  if (filters.protocol) {
+    params.set('protocol', filters.protocol);
+  }
+  params.set('sort', filters.sort ?? 'volume');
+  params.set('page', String(filters.page ?? 1));
+  params.set('limit', String(filters.limit ?? 20));
+  return request<MarketPage>(`/v1/markets?${params.toString()}`, signal);
+}
+
 /** OHLCV price history for charts (PRD §17 prices). */
 export function fetchPriceHistory(
   asset: string,
