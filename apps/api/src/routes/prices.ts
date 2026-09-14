@@ -11,7 +11,7 @@ export async function priceRoutes(app: FastifyInstance, source: DataSource): Pro
       badRequest(reply, zodMessage(parsed.error));
       return;
     }
-    const price = source.getPrice(parsed.data.asset);
+    const price = await source.getPrice(parsed.data.asset);
     if (price === null) {
       notFound(reply, `No price for unknown asset "${parsed.data.asset}".`);
       return;
@@ -30,10 +30,12 @@ export async function priceRoutes(app: FastifyInstance, source: DataSource): Pro
       badRequest(reply, zodMessage(queryParsed.error));
       return;
     }
-    if (source.getPrice(paramsParsed.data.asset) === null) {
+    if ((await source.getPrice(paramsParsed.data.asset)) === null) {
       notFound(reply, `No price history for unknown asset "${paramsParsed.data.asset}".`);
       return;
     }
-    await reply.send(source.priceHistory(paramsParsed.data.asset, queryParsed.data.timeframe));
+    await reply.send(
+      await source.priceHistory(paramsParsed.data.asset, queryParsed.data.timeframe),
+    );
   });
 }

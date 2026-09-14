@@ -12,7 +12,7 @@ export async function poolRoutes(app: FastifyInstance, source: DataSource): Prom
       return;
     }
     const { protocol, sort, page, limit } = parsed.data;
-    const result = source.listPools({
+    const result = await source.listPools({
       ...(protocol !== undefined ? { protocol } : {}),
       sort,
       page,
@@ -27,7 +27,7 @@ export async function poolRoutes(app: FastifyInstance, source: DataSource): Prom
       badRequest(reply, zodMessage(parsed.error));
       return;
     }
-    const pool = source.getPool(parsed.data.pool);
+    const pool = await source.getPool(parsed.data.pool);
     if (pool === null) {
       notFound(reply, `Unknown pool "${parsed.data.pool}".`);
       return;

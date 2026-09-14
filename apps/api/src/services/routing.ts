@@ -67,13 +67,13 @@ function impactOf(output: number, amountIn: number, midPrice: number): number {
  * implements the same contract (rank by net output) over local reserves so
  * the API is functional standalone.
  */
-export function evaluateRoutes(
+export async function evaluateRoutes(
   source: DataSource,
   from: string,
   to: string,
   amount: number,
-): SwapRoute[] {
-  const direct = source.poolReserves(from, to);
+): Promise<SwapRoute[]> {
+  const direct = await source.poolReserves(from, to);
   const routes: SwapRoute[] = [];
 
   // Route A — best direct pool.
@@ -116,12 +116,12 @@ export function evaluateRoutes(
     if (mid === from || mid === to) {
       continue;
     }
-    for (const first of source.poolReserves(from, mid)) {
+    for (const first of await source.poolReserves(from, mid)) {
       const midAmount = constantProductOut(amount, first.reserveA, first.reserveB, first.fee);
       if (midAmount <= 0) {
         continue;
       }
-      for (const second of source.poolReserves(mid, to)) {
+      for (const second of await source.poolReserves(mid, to)) {
         const out = constantProductOut(midAmount, second.reserveA, second.reserveB, second.fee);
         if (bestHop === null || out > bestHop.out) {
           bestHop = { mid, first, second, out };

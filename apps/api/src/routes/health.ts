@@ -22,7 +22,7 @@ export async function healthRoutes(app: FastifyInstance, source: DataSource): Pr
 
   app.get('/ready', async (_request, reply) => {
     try {
-      const probe = source.listAssets({ page: 1, limit: 1 });
+      const probe = await source.listAssets({ page: 1, limit: 1 });
       const assets = probe.total;
       await reply.send({ status: 'ready', version, checks: { data: 'ok', assets } });
     } catch (err: unknown) {

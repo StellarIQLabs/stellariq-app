@@ -12,7 +12,7 @@ export async function marketRoutes(app: FastifyInstance, source: DataSource): Pr
       return;
     }
     const { protocol, sort, page, limit } = parsed.data;
-    const result = source.listMarkets({
+    const result = await source.listMarkets({
       ...(protocol !== undefined ? { protocol } : {}),
       sort,
       page,
@@ -27,7 +27,7 @@ export async function marketRoutes(app: FastifyInstance, source: DataSource): Pr
       badRequest(reply, zodMessage(parsed.error));
       return;
     }
-    const market = source.getMarket(parsed.data.pair);
+    const market = await source.getMarket(parsed.data.pair);
     if (market === null) {
       notFound(reply, `Unknown market pair "${parsed.data.pair}".`);
       return;

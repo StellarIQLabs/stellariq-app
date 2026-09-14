@@ -12,7 +12,7 @@ export async function assetRoutes(app: FastifyInstance, source: DataSource): Pro
       return;
     }
     const { search, verified, page, limit } = parsed.data;
-    const result = source.listAssets({
+    const result = await source.listAssets({
       ...(search !== undefined ? { search } : {}),
       ...(verified !== undefined ? { verifiedOnly: verified } : {}),
       page,
@@ -27,7 +27,7 @@ export async function assetRoutes(app: FastifyInstance, source: DataSource): Pro
       badRequest(reply, zodMessage(parsed.error));
       return;
     }
-    const asset = source.getAsset(parsed.data.asset);
+    const asset = await source.getAsset(parsed.data.asset);
     if (asset === null) {
       notFound(reply, `Unknown asset "${parsed.data.asset}".`);
       return;

@@ -37,26 +37,40 @@ export interface SeriesPoint {
 }
 
 export interface DataSource {
-  listAssets(opts: { search?: string; verifiedOnly?: boolean } & ListOptions): Paged<Asset>;
-  getAsset(id: string): AssetWithMarket | null;
+  listAssets(
+    opts: { search?: string; verifiedOnly?: boolean } & ListOptions,
+  ): Paged<Asset> | Promise<Paged<Asset>>;
+  getAsset(id: string): AssetWithMarket | null | Promise<AssetWithMarket | null>;
   listMarkets(
     opts: { protocol?: Protocol; sort: 'volume' | 'liquidity' | 'change' } & ListOptions,
-  ): Paged<Market>;
-  getMarket(pair: string): AggregatedMarket | null;
-  listPools(opts: { protocol?: Protocol; sort: 'tvl' | 'volume' } & ListOptions): Paged<Pool>;
-  getPool(id: string): Pool | null;
+  ): Paged<Market> | Promise<Paged<Market>>;
+  getMarket(pair: string): AggregatedMarket | null | Promise<AggregatedMarket | null>;
+  listPools(
+    opts: { protocol?: Protocol; sort: 'tvl' | 'volume' } & ListOptions,
+  ): Paged<Pool> | Promise<Paged<Pool>>;
+  getPool(id: string): Pool | null | Promise<Pool | null>;
   listSwaps(
     opts: { asset?: string; pool?: string; protocol?: Protocol } & ListOptions,
-  ): Paged<Swap>;
-  recentSwaps(limit: number, filters?: { asset?: string; protocol?: Protocol }): Swap[];
-  swapsTotal(): number;
-  getPrice(asset: string): Price | null;
-  priceHistory(asset: string, timeframe: Timeframe): OhlcvCandle[];
-  volumeSeries(timeframe: Timeframe): SeriesPoint[];
-  liquiditySeries(asset: string | undefined, timeframe: Timeframe): SeriesPoint[];
+  ): Paged<Swap> | Promise<Paged<Swap>>;
+  recentSwaps(
+    limit: number,
+    filters?: { asset?: string; protocol?: Protocol },
+  ): Swap[] | Promise<Swap[]>;
+  swapsTotal(): number | Promise<number>;
+  getPrice(asset: string): Price | null | Promise<Price | null>;
+  priceHistory(asset: string, timeframe: Timeframe): OhlcvCandle[] | Promise<OhlcvCandle[]>;
+  volumeSeries(timeframe: Timeframe): SeriesPoint[] | Promise<SeriesPoint[]>;
+  liquiditySeries(
+    asset: string | undefined,
+    timeframe: Timeframe,
+  ): SeriesPoint[] | Promise<SeriesPoint[]>;
   /** Null when either side is unknown — the quote task turns this into 404s. */
   poolReserves(
     assetA: string,
     assetB: string,
-  ): { poolId: string; protocol: Protocol; reserveA: number; reserveB: number; fee: number }[];
+  ):
+    | { poolId: string; protocol: Protocol; reserveA: number; reserveB: number; fee: number }[]
+    | Promise<
+        { poolId: string; protocol: Protocol; reserveA: number; reserveB: number; fee: number }[]
+      >;
 }

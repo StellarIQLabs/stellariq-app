@@ -13,7 +13,7 @@ export async function quoteRoutes(app: FastifyInstance, source: DataSource): Pro
       return;
     }
     const { from, to, amount } = parsed.data;
-    const routes = evaluateRoutes(source, from, to, amount);
+    const routes = await evaluateRoutes(source, from, to, amount);
     const quote = toQuote(from, to, amount, routes);
     if (quote === null) {
       notFound(reply, `No route available for ${from} → ${to}.`);

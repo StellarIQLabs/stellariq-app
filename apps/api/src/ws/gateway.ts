@@ -37,14 +37,14 @@ export async function registerWsGateway(app: FastifyInstance, source: DataSource
   app.get('/ws', { websocket: true }, (socket) => {
     const subscriptions = new Set<string>();
 
-    const pushUpdate = (channel: string): void => {
+    const pushUpdate = async (channel: string): Promise<void> => {
       const split = splitChannel(channel);
       if (!split) {
         return;
       }
       const now = Math.floor(Date.now() / 1000);
       if (split.topic === 'price') {
-        const market = source.getMarket(split.pair);
+        const market = await source.getMarket(split.pair);
         if (market?.price === undefined) {
           return;
         }
@@ -58,20 +58,18 @@ export async function registerWsGateway(app: FastifyInstance, source: DataSource
       }
       if (split.topic === 'trades') {
         const [base = '', quote = ''] = split.pair.split('/');
-        const latest = source
-          .recentSwaps(10)
-          .find(
-            (s) =>
-              (s.inputAsset === base && s.outputAsset === quote) ||
-              (s.inputAsset === quote && s.outputAsset === base),
-          );
+        const latest = (await source.recentSwaps(10)).find(
+          (s) =>
+            (s.inputAsset === base && s.outputAsset === quote) ||
+            (s.inputAsset === quote && s.outputAsset === base),
+        );
         if (!latest) {
           return;
         }
         send(socket, { type: 'trade_update', pair: split.pair, swap: latest, timestamp: now });
         return;
       }
-      const market = source.getMarket(split.pair);
+      const market = await source.getMarket(split.pair);
       if (market?.liquidity === undefined) {
         return;
       }

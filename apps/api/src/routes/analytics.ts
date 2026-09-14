@@ -14,7 +14,7 @@ export async function analyticsRoutes(app: FastifyInstance, source: DataSource):
     await reply.send({
       metric: 'volume',
       timeframe: parsed.data.timeframe,
-      points: source.volumeSeries(parsed.data.timeframe),
+      points: await source.volumeSeries(parsed.data.timeframe),
     });
   });
 
@@ -27,7 +27,7 @@ export async function analyticsRoutes(app: FastifyInstance, source: DataSource):
     await reply.send({
       metric: 'liquidity',
       timeframe: parsed.data.timeframe,
-      points: source.liquiditySeries(parsed.data.asset, parsed.data.timeframe),
+      points: await source.liquiditySeries(parsed.data.asset, parsed.data.timeframe),
     });
   });
 }

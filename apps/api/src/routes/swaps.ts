@@ -12,7 +12,7 @@ export async function swapRoutes(app: FastifyInstance, source: DataSource): Prom
       return;
     }
     const { asset, protocol, pool, page, limit } = parsed.data;
-    const result = source.listSwaps({
+    const result = await source.listSwaps({
       ...(asset !== undefined ? { asset } : {}),
       ...(pool !== undefined ? { pool } : {}),
       ...(protocol !== undefined ? { protocol } : {}),
@@ -30,7 +30,7 @@ export async function swapRoutes(app: FastifyInstance, source: DataSource): Prom
     }
     const { asset, protocol, limit } = parsed.data;
     await reply.send(
-      source.recentSwaps(limit, {
+      await source.recentSwaps(limit, {
         ...(asset !== undefined ? { asset } : {}),
         ...(protocol !== undefined ? { protocol } : {}),
       }),

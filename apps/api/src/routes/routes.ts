@@ -13,7 +13,7 @@ export async function routeRoutes(app: FastifyInstance, source: DataSource): Pro
       return;
     }
     const { from, to, amount } = parsed.data;
-    const routes = evaluateRoutes(source, from, to, amount);
+    const routes = await evaluateRoutes(source, from, to, amount);
     if (routes.length === 0) {
       notFound(reply, `No routes available for ${from} → ${to}.`);
       return;
