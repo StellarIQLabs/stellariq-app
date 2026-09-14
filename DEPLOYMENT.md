@@ -68,13 +68,18 @@ want the frontend specifically on it; you'd still host the API on Railway.
 
 On Vercel: **New Project → import the repo →**
 
-- **Root Directory**: `apps/web` (enable "Include files outside root" so the
-  pnpm workspace packages resolve)
+- **Root Directory**: `apps/web` (Vercel auto-includes the pnpm workspace)
 - **Framework preset**: Next.js
+- **Build Command** (override — the workspace packages export from `dist/` and
+  must be built before `next build`):
+  ```
+  pnpm --filter @stellariq/types --filter @stellariq/schemas --filter @stellariq/sdk --filter @stellariq/ui build && pnpm --filter @stellariq/web build
+  ```
+- **Install Command**: leave default (`pnpm install`)
 - **Environment Variables**: the same `NEXT_PUBLIC_*` values as above.
 
-Vercel auto-detects the pnpm workspace. The API still lives on Railway; point
-`NEXT_PUBLIC_API_BASE_URL` at the Railway API domain.
+The API still lives on Railway; point `NEXT_PUBLIC_API_BASE_URL` at the Railway
+API domain.
 
 ---
 
