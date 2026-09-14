@@ -1,0 +1,22 @@
+# Render blueprint — deploys the StellarIQ API (Fastify) on the free tier.
+# The web dashboard is deployed separately on Vercel and points at this API.
+#
+# Free-tier note: the service sleeps after ~15 min idle, so the first request
+# after inactivity has a cold start (~30-60s). Fine for a demo.
+services:
+  - type: web
+    name: stellariq-api
+    runtime: docker
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: API_PORT
+        value: '10000' # Render routes to this port
+      - key: API_HOST
+        value: '0.0.0.0'
+      - key: API_KEY_SALT
+        generateValue: true # Render generates a strong random value
+      - key: DATA_API_URL
+        value: '' # empty → built-in mock data (no DB needed)
