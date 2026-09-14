@@ -3,7 +3,9 @@ import { formatChange, formatCount, formatPrice, formatTime, formatUsd } from '.
 
 describe('format', () => {
   it('formats compact USD values', () => {
-    expect(formatUsd(12_800_000)).toMatch(/\$12\.8M/);
+    // ICU compact formatting varies on the trailing zero across Node/ICU
+    // versions ($12.8M vs $12.80M); accept either.
+    expect(formatUsd(12_800_000)).toMatch(/\$12\.80?M/);
     expect(formatUsd(undefined)).toBe('—');
   });
 
