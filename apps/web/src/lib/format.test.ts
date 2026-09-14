@@ -3,7 +3,7 @@ import { formatChange, formatCount, formatPrice, formatTime, formatUsd } from '.
 
 describe('format', () => {
   it('formats compact USD values', () => {
-    expect(formatUsd(12_800_000)).toMatch(/\$12\.80M/);
+    expect(formatUsd(12_800_000)).toMatch(/\$12\.8M/);
     expect(formatUsd(undefined)).toBe('—');
   });
 

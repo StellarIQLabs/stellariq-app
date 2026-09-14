@@ -26,6 +26,7 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
       - run: pnpm -r --if-present lint
       - run: pnpm -r --if-present typecheck
 
@@ -42,6 +43,7 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm -r build
       - run: pnpm --filter @stellariq/web test
       - run: pnpm --filter @stellariq/api test
       - run: pnpm --filter @stellariq/sdk test
