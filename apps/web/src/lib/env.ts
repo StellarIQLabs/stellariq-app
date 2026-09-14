@@ -14,7 +14,10 @@ export interface WebEnv {
 }
 
 function required(name: string, fallback?: string): string {
-  const value = process.env[name] ?? fallback;
+  // Next.js inlines unset NEXT_PUBLIC_* vars as empty strings (not undefined),
+  // so treat empty the same as missing and use the fallback.
+  const raw = process.env[name];
+  const value = raw && raw.length > 0 ? raw : fallback;
   if (!value) {
     throw new Error(`Missing required env var ${name}. See apps/web/.env.example.`);
   }
