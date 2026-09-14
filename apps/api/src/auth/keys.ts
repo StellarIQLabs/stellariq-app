@@ -1,4 +1,5 @@
 import { createHmac, randomBytes } from 'node:crypto';
+import type { KeyPersistence } from './fileStore.js';
 
 /** Monetization tiers (PRD §30). Limits attach per tier in the rate-limit task. */
 export type ApiTier = 'free' | 'developer' | 'pro' | 'enterprise';
@@ -33,13 +34,27 @@ function newId(): string {
 /**
  * API key issuance and per-key lookup. Raw keys are random 256-bit tokens
  * prefixed `siq_`; only HMAC hashes are stored.
+ *
+ * When a `KeyPersistence` back-end is provided (file or database), keys
+ * survive process restarts. Without it, keys live only in memory.
  */
 export class KeyStore {
   private readonly salt: string;
   private readonly records = new Map<string, ApiKeyRecord>();
+  private readonly persistence: KeyPersistence | null;
 
-  constructor(salt: string) {
+  constructor(salt: string, persistence?: KeyPersistence) {
     this.salt = salt;
+    this.persistence = persistence ?? null;
+    if (this.persistence) {
+      for (const record of this.persistence.load()) {
+        this.records.set(record.keyHash, record);
+      }
+    }
+  }
+
+  private flush(): void {
+    this.persistence?.save([...this.records.values()]);
   }
 
   issue(name: string, tier: ApiTier): IssuedKey {
@@ -54,6 +69,7 @@ export class KeyStore {
       revokedAt: null,
     };
     this.records.set(record.keyHash, record);
+    this.flush();
     return { key, record };
   }
 
@@ -70,6 +86,7 @@ export class KeyStore {
     for (const record of this.records.values()) {
       if (record.id === id && record.revokedAt === null) {
         record.revokedAt = new Date().toISOString();
+        this.flush();
         return true;
       }
     }

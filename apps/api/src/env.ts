@@ -11,6 +11,8 @@ export interface ApiEnv {
   seedDevKeys: boolean;
   /** Redis counters for rate limits. Absent means in-memory counters. */
   redisUrl: string | null;
+  /** File path for persistent API key storage. Absent means in-memory only. */
+  keyStorePath: string | null;
 }
 
 function numberOr(name: string, fallback: number): number {
@@ -35,5 +37,6 @@ export function loadEnv(): ApiEnv {
     adminToken: process.env['ADMIN_TOKEN'] ?? null,
     seedDevKeys: process.env['SEED_DEV_KEYS'] === 'true',
     redisUrl: process.env['REDIS_URL'] ?? null,
+    keyStorePath: process.env['KEY_STORE_PATH'] ?? null,
   };
 }

@@ -8,6 +8,7 @@ import { registerAuth } from './auth/middleware.js';
 import { createRateStore, registerRateLimit } from './auth/rateLimit.js';
 import { MAX_BODY_BYTES, registerSecurity } from './security.js';
 import { KeyStore } from './auth/keys.js';
+import { FileKeyPersistence } from './auth/fileStore.js';
 import { keyRoutes } from './routes/keys.js';
 import { sendError } from './errors.js';
 
@@ -41,7 +42,8 @@ export async function buildApp({ env, source }: BuildAppOptions): Promise<Fastif
   await registerRoutes(app, source);
   await registerWsGateway(app, source);
 
-  const keys = new KeyStore(env.apiKeySalt);
+  const persistence = env.keyStorePath ? new FileKeyPersistence(env.keyStorePath) : undefined;
+  const keys = new KeyStore(env.apiKeySalt, persistence);
   await registerAuth(app, keys);
   const rateStore = await createRateStore(app, env.redisUrl);
   await registerRateLimit(app, rateStore);
