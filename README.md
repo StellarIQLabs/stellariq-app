@@ -4,6 +4,20 @@
 user-facing layer: the web dashboard, the public REST + WebSocket API, the
 TypeScript SDK, and the shared design system.
 
+## 🚀 Live Demo
+
+| Resource                           | Link                                                                                                                         |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Web dashboard**                  | https://stellariq-app-web-49hh.vercel.app                                                                                    |
+| **API docs (Swagger UI)**          | https://stellariq-api-p1hz.onrender.com/docs                                                                                 |
+| **API health check**               | https://stellariq-api-p1hz.onrender.com/health                                                                               |
+| **Live API base**                  | `https://stellariq-api-p1hz.onrender.com/v1`                                                                                 |
+| **Swap router contract (testnet)** | [`CC277AA6…VHSP`](https://stellar.expert/explorer/testnet/contract/CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP) |
+
+> ℹ️ The API runs on Render's free tier and sleeps after ~15 min idle — the
+> first request after inactivity may take 30–60s to cold-start. Subsequent
+> requests are fast. Try it: `curl https://stellariq-api-p1hz.onrender.com/v1/markets`
+
 > **Contracts moved:** Soroban contracts now live in the standalone repo
 > [`StellarIQLabs/stellariq-contract`](https://github.com/StellarIQLabs/stellariq-contract).
 > This repo builds unsigned transactions via `@stellar/stellar-sdk` and delegates
