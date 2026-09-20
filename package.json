@@ -17,6 +17,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",
+    "dev": "pnpm dev:web",
+    "dev:all": "pnpm dev:api & pnpm dev:web",
     "dev:web": "pnpm --filter @stellariq/web dev",
     "dev:api": "pnpm --filter @stellariq/api dev"
   },
