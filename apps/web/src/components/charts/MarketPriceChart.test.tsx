@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { MarketPriceChart } from './MarketPriceChart.js';
+import { exportOHLCVToCSV, MarketPriceChart } from './MarketPriceChart.js';
 
 vi.mock('lightweight-charts', () => {
   const setData = vi.fn();
@@ -91,5 +91,21 @@ describe('MarketPriceChart', () => {
       />,
     );
     expect(screen.getByRole('status')).toBeInTheDocument();
+  });
+
+  it('renders Export CSV button when candles exist and formats CSV data correctly', () => {
+    render(
+      <MarketPriceChart
+        pair="XLM/USDC"
+        candles={CANDLES}
+        timeframe="1D"
+        onTimeframeChange={() => undefined}
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'Export CSV' })).toBeInTheDocument();
+    const csv = exportOHLCVToCSV(CANDLES);
+    expect(csv).toContain('timestamp,isoDate,open,high,low,close,volume');
+    expect(csv).toContain('1789060000');
+    expect(csv).toContain('0.2374');
   });
 });
