@@ -20,6 +20,16 @@ function formatFees(fees: number, asset: string): string {
   return `${fees.toLocaleString()} ${asset}`;
 }
 
+function impactTone(impact: number): 'positive' | 'warning' | 'negative' {
+  if (impact < 0.01) {
+    return 'positive';
+  }
+  if (impact < 0.025) {
+    return 'warning';
+  }
+  return 'negative';
+}
+
 /**
  * Primary result card (PRD §13): recommended output amount with price impact
  * and fees. Route selection and signing compose around it in later tasks.
@@ -57,9 +67,13 @@ export function BestExecutionCard({
             {quote.outputAmount.toLocaleString()} {quote.to}
           </p>
           <dl className="mt-4 flex flex-col gap-2 text-sm">
-            <div className="flex justify-between gap-4">
+            <div className="flex items-center justify-between gap-4">
               <dt className="text-muted">Price impact</dt>
-              <dd className="font-mono">{(quote.priceImpact * 100).toFixed(2)}%</dd>
+              <dd className="font-mono">
+                <Badge tone={impactTone(quote.priceImpact)}>
+                  {(quote.priceImpact * 100).toFixed(2)}%
+                </Badge>
+              </dd>
             </div>
             <div className="flex justify-between gap-4">
               <dt className="text-muted">Fees</dt>
@@ -70,6 +84,11 @@ export function BestExecutionCard({
               <dd className="font-mono">{quote.routeId}</dd>
             </div>
           </dl>
+          {quote.priceImpact >= 0.025 && (
+            <p role="alert" className="mt-3 text-xs font-medium text-negative">
+              ⚠️ High price impact — consider a smaller trade amount or multi-hop routing.
+            </p>
+          )}
           {refreshing && (
             <p className="mt-3 text-center font-mono text-xs text-muted">Refreshing…</p>
           )}

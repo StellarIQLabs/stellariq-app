@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { StellarIQClient, StellarIQError } from './client.js';
+import { StellarIQClient, StellarIQError, backoffWithJitter } from './client.js';
 
 function jsonResponse(payload: unknown, status = 200, retryAfter?: string): Response {
   return {
@@ -81,5 +81,10 @@ describe('StellarIQClient', () => {
       assert.equal(err.status, 0);
       return true;
     });
+  });
+
+  it('calculates exponential backoff within jitter bounds', () => {
+    const delay = backoffWithJitter(2, 100, 1000);
+    assert.ok(delay >= 0 && delay <= 400);
   });
 });

@@ -66,12 +66,18 @@ function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/** Calculates exponential backoff with full jitter to avoid thundering herd issues. */
+export function backoffWithJitter(attempt: number, baseMs = 250, maxMs = 5000): number {
+  const temp = Math.min(maxMs, baseMs * 2 ** attempt);
+  return Math.floor(Math.random() * temp);
+}
+
 function retryAfterMs(header: string | null, attempt: number): number {
   const seconds = header ? Number(header) : Number.NaN;
   if (Number.isFinite(seconds) && seconds >= 0) {
     return seconds * 1000;
   }
-  return 250 * 2 ** attempt;
+  return backoffWithJitter(attempt);
 }
 
 /**
