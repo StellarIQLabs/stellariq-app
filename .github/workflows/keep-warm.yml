@@ -1,0 +1,31 @@
+name: keep-warm
+
+# Pings the free-tier Render services so a reviewer never hits a cold start.
+# Render sleeps a free service after ~15 min idle, so we ping every ~12 min.
+# The data API URL is read from the repo variable DATA_API_URL once it is
+# deployed (Settings -> Secrets and variables -> Actions -> Variables); the
+# step skips cleanly while it is unset.
+
+on:
+  schedule:
+    - cron: '*/12 * * * *'
+  workflow_dispatch: {}
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Warm the API and data services
+        env:
+          API_URL: https://stellariq-api-p1hz.onrender.com
+          DATA_API_URL: ${{ vars.DATA_API_URL }}
+        run: |
+          warm() {
+            local base="$1"
+            [ -z "$base" ] && { echo "skip: $2 not set"; return 0; }
+            code=$(curl -s -m 60 -o /dev/null -w '%{http_code}' "$base/health" || echo "000")
+            echo "$2 $base/health -> $code"
+          }
+          warm "$API_URL" "api"
+          warm "$DATA_API_URL" "data"
+          echo "done"
