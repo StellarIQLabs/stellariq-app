@@ -41,14 +41,14 @@ export function Table<T>({
   }
   return (
     <div className={clsx('overflow-x-auto', className)}>
-      <table className="w-full border-collapse text-sm">
+      <table className="w-full border-collapse text-[13px] tabular-nums">
         <thead>
           <tr className="border-b border-border text-muted">
             {columns.map((col) => (
               <th
                 key={col.key}
                 className={clsx(
-                  'px-3 py-2 font-medium uppercase tracking-wide text-xs',
+                  'px-3 py-2 text-[10px] font-medium uppercase tracking-wider',
                   alignClasses[col.align ?? 'left'],
                 )}
               >
@@ -70,11 +70,11 @@ export function Table<T>({
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={keyOf(row)} className="border-b border-border/50 hover:bg-surface-raised/40">
+            <tr key={keyOf(row)} className="border-b border-border/60 hover:bg-surface-raised/50">
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={clsx('px-3 py-2.5', alignClasses[col.align ?? 'left'])}
+                  className={clsx('px-3 py-1.5', alignClasses[col.align ?? 'left'])}
                 >
                   {col.render(row)}
                 </td>

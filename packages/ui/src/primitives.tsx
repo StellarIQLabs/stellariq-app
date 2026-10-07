@@ -12,22 +12,22 @@ export interface StatProps {
 
 export function Stat({ label, value, change, loading, error, hint }: StatProps) {
   return (
-    <div className="rounded-lg border border-border bg-surface p-5">
-      <p className="text-xs font-medium uppercase tracking-wide text-muted">{label}</p>
+    <div className="rounded-md border border-border bg-surface px-4 py-3">
+      <p className="text-[10px] font-medium uppercase tracking-wider text-muted">{label}</p>
       {loading ? (
         <div
-          className="mt-2 h-7 w-24 animate-pulse rounded bg-surface-raised"
+          className="mt-2 h-6 w-24 animate-pulse rounded bg-surface-raised"
           aria-label="Loading"
         />
       ) : error ? (
         <p className="mt-2 text-sm text-negative">{error}</p>
       ) : (
-        <p className="mt-2 font-mono text-2xl font-semibold text-text">{value}</p>
+        <p className="mt-1.5 font-mono text-xl font-semibold tabular-nums text-text">{value}</p>
       )}
       {change !== undefined && !loading && !error && (
         <p
           className={clsx(
-            'mt-1 text-sm font-medium',
+            'mt-1 font-mono text-xs font-medium tabular-nums',
             change >= 0 ? 'text-positive' : 'text-negative',
           )}
         >
@@ -47,18 +47,18 @@ export interface BadgeProps {
 }
 
 const toneClasses: Record<NonNullable<BadgeProps['tone']>, string> = {
-  neutral: 'bg-surface-raised text-muted',
-  positive: 'bg-positive/15 text-positive',
-  negative: 'bg-negative/15 text-negative',
-  warning: 'bg-warning/15 text-warning',
-  accent: 'bg-accent/15 text-accent',
+  neutral: 'border-border text-muted',
+  positive: 'border-positive/40 text-positive',
+  negative: 'border-negative/40 text-negative',
+  warning: 'border-warning/40 text-warning',
+  accent: 'border-accent/40 text-accent',
 };
 
 export function Badge({ tone = 'neutral', children, className }: BadgeProps) {
   return (
     <span
       className={clsx(
-        'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+        'inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide',
         toneClasses[tone],
         className,
       )}

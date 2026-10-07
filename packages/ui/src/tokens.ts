@@ -1,37 +1,38 @@
 /** StellarIQ design tokens - the single source of truth for the web look. */
 
 export const colors = {
-  background: '#070b16',
-  surface: '#0f1626',
-  surfaceRaised: '#16203a',
-  border: '#26324f',
-  text: '#eef2fb',
-  textMuted: '#8a93ac',
+  background: '#060a13',
+  surface: '#0d1420',
+  surfaceRaised: '#141d2e',
+  border: '#232f45',
+  text: '#e9eef7',
+  textMuted: '#7f8aa3',
   accent: '#5b8cff',
-  accentSoft: 'rgba(91, 140, 255, 0.14)',
-  cyan: '#35d0d6',
-  positive: '#2fd27e',
-  negative: '#ff5a6a',
-  warning: '#f7b955',
+  accentSoft: 'rgba(91, 140, 255, 0.12)',
+  cyan: '#2bb7bd',
+  positive: '#1fb574',
+  negative: '#ef5a68',
+  warning: '#e0a53a',
 } as const;
 
+/** Tight radii: a terminal reads as precise, not soft. */
 export const radii = {
-  sm: '8px',
-  md: '12px',
-  lg: '16px',
-  xl: '20px',
+  sm: '3px',
+  md: '5px',
+  lg: '7px',
+  xl: '10px',
   full: '9999px',
 } as const;
 
 export const fontFamily = {
-  display: ['Sora', 'system-ui', 'sans-serif'],
+  display: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
   sans: ['"IBM Plex Sans"', 'system-ui', '-apple-system', 'sans-serif'],
   mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
 } as const;
 
 export const shadows = {
-  card: '0 1px 2px rgba(0, 0, 0, 0.40), 0 12px 32px rgba(0, 0, 0, 0.35)',
-  glow: '0 0 40px rgba(91, 140, 255, 0.18)',
+  card: 'none',
+  glow: 'none',
 } as const;
 
 export type ColorToken = keyof typeof colors;
