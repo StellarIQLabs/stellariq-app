@@ -1,4 +1,4 @@
-/** @stellariq/types — shared domain types for web and api. */
+/** @stellariq/types - shared domain types for web and api. */
 export * from './common.js';
 export * from './asset.js';
 export * from './market.js';

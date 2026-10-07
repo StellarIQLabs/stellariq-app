@@ -70,8 +70,8 @@ export class RedisRateStore implements RateStore {
 }
 
 /**
- * Tier enforcement: every request consumes from the caller's 60s budget —
- * keyed by key prefix for authenticated callers, by IP for anonymous ones —
+ * Tier enforcement: every request consumes from the caller's 60s budget -
+ * keyed by key prefix for authenticated callers, by IP for anonymous ones -
  * and over-budget requests get a 429 with `Retry-After`.
  */
 export async function registerRateLimit(app: FastifyInstance, store: RateStore): Promise<void> {
@@ -84,7 +84,7 @@ export async function registerRateLimit(app: FastifyInstance, store: RateStore):
     const windowId = Math.floor(Date.now() / (RATE_WINDOW_S * 1000));
     const { count, ttl } = await store.hit(`${identity}:${windowId}`);
     const limit = TIER_LIMITS[tier];
-    // NOTE: reply.header() is synchronous — never await it. Fastify replies
+    // NOTE: reply.header() is synchronous - never await it. Fastify replies
     // are thenable, so awaiting one here would wait for a send that never
     // comes and deadlock the request.
     reply.header('x-ratelimit-limit', limit);

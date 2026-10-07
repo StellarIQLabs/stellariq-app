@@ -1,6 +1,6 @@
-# stellariq-app — Product, API, SDK & Web
+# stellariq-app - Product, API, SDK & Web
 
-**StellarIQ** — _Intelligence for Stellar DeFi._ This repo is the product and
+**StellarIQ** - _Intelligence for Stellar DeFi._ This repo is the product and
 user-facing layer: the web dashboard, the public REST + WebSocket API, the
 TypeScript SDK, and the shared design system.
 
@@ -14,14 +14,14 @@ TypeScript SDK, and the shared design system.
 | **Live API base**                  | `https://stellariq-api-p1hz.onrender.com/v1`                                                                                 |
 | **Swap router contract (testnet)** | [`CC277AA6…VHSP`](https://stellar.expert/explorer/testnet/contract/CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP) |
 
-> ℹ️ The API runs on Render's free tier and sleeps after ~15 min idle — the
-> first request after inactivity may take 30–60s to cold-start. Subsequent
+> ℹ️ The API runs on Render's free tier and sleeps after ~15 min idle - the
+> first request after inactivity may take 30-60s to cold-start. Subsequent
 > requests are fast. Try it: `curl https://stellariq-api-p1hz.onrender.com/v1/markets`
 
 > **Contracts moved:** Soroban contracts now live in the standalone repo
 > [`StellarIQLabs/stellariq-contract`](https://github.com/StellarIQLabs/stellariq-contract).
 > This repo builds unsigned transactions via `@stellar/stellar-sdk` and delegates
-> signing to the wallet — it no longer contains a `contracts/` workspace.
+> signing to the wallet - it no longer contains a `contracts/` workspace.
 
 Spec source of truth: [`PRD.md`](../PRD.md) (repo root, outside this repo).
 
@@ -42,7 +42,7 @@ stellariq-app/
 └── .github/workflows/  # CI: quality, tests, build, e2e, images
 ```
 
-Sibling repos: `stellariq-data` (data & intelligence — indexer, price engine,
+Sibling repos: `stellariq-data` (data & intelligence - indexer, price engine,
 analytics, routing; this API mocks it behind a `DataSource` seam until its API
 lands), `stellariq-contract` (standalone Soroban contracts & deploy scripts), and
 `stellariq-infra` (cloud, DB, K8s, CI/CD, image deployment).
@@ -61,10 +61,10 @@ lands), `stellariq-contract` (standalone Soroban contracts & deploy scripts), an
 ```bash
 pnpm install
 
-# Terminal 1 — API (http://localhost:4000, ws at /ws)
+# Terminal 1 - API (http://localhost:4000, ws at /ws)
 pnpm dev:api            # or: pnpm --filter @stellariq/api dev
 
-# Terminal 2 — web (http://localhost:3000)
+# Terminal 2 - web (http://localhost:3000)
 pnpm dev:web
 ```
 
@@ -78,7 +78,7 @@ Root (`pnpm <script>`):
 
 | Script                        | What it does                                                               |
 | ----------------------------- | -------------------------------------------------------------------------- |
-| `build`                       | `pnpm -r build` — topological builds of all workspaces                     |
+| `build`                       | `pnpm -r build` - topological builds of all workspaces                     |
 | `lint` / `typecheck` / `test` | recursive gates (`--if-present`)                                           |
 | `test:e2e`                    | Playwright suite in `tests/e2e` (boots API + production web automatically) |
 | `format` / `format:check`     | Prettier write/check                                                       |
@@ -105,7 +105,7 @@ Next.js App Router + Tailwind (preset shared from `@stellariq/ui`) +
 
 Global shell (header, sidebar, mobile drawer, breadcrumbs, footer) wraps every
 page; `loading.tsx` / `error.tsx` / `not-found.tsx` cover async states.
-Private keys never touch the app — signing happens exclusively in the wallet.
+Private keys never touch the app - signing happens exclusively in the wallet.
 
 ## API (`apps/api`)
 
@@ -147,17 +147,17 @@ data (XLM/USDC/EURC/AQUA, 6 markets, 6 pools, 24 swaps); point it at the real
 
 ## Packages
 
-- **`@stellariq/types`** — `Asset`, `AssetWithMarket`, `Market`,
+- **`@stellariq/types`** - `Asset`, `AssetWithMarket`, `Market`,
   `AggregatedMarket`, `Pool`, `Swap`, `Price`, `Quote`, `SwapRoute`,
   `RoutesResponse`, `Protocol`, `Timeframe`, `OhlcvCandle`, pagination/error/WS
   shapes. Imported by web and api.
-- **`@stellariq/schemas`** — Zod schemas for every request/response above;
+- **`@stellariq/schemas`** - Zod schemas for every request/response above;
   handlers `safeParse` at the edge and return 400 envelopes on failure.
-- **`@stellariq/ui`** — `stellariqPreset` Tailwind preset, `Button`, `Card`,
+- **`@stellariq/ui`** - `stellariqPreset` Tailwind preset, `Button`, `Card`,
   `Table` (sortable), `Stat`/`Badge`/`Spinner`/`EmptyState`, dependency-free
   SVG `LineChart`/`BarsChart`/`PriceChart`; Storybook stories + config
   (`pnpm --filter @stellariq/ui storybook`).
-- **`@stellariq/sdk`** — `StellarIQClient` (all REST endpoints, timeout,
+- **`@stellariq/sdk`** - `StellarIQClient` (all REST endpoints, timeout,
   429/5xx retries honoring `Retry-After`, typed `StellarIQError`) and
   `StellarIQSocket` (`subscribe("XLM/USDC:price", handler)` with channel
   multiplexing and auto-reconnect replay). Usage + examples:
@@ -174,14 +174,14 @@ unsigned XDR via `@stellar/stellar-sdk`), `wallet.ts` + `useWallet` +
 
 ## Testing
 
-- Web unit: `pnpm --filter @stellariq/web test` — Vitest + Testing Library
+- Web unit: `pnpm --filter @stellariq/web test` - Vitest + Testing Library
   (formatters, router stubs, sortable table, OHLCV chart with mocked
   `lightweight-charts`, debounced/stale-safe `useQuote`, validated `SwapForm`).
 - API/SDK: `pnpm --filter @stellariq/api test`,
-  `pnpm --filter @stellariq/sdk test` — `node:test` suites (engine ranking,
+  `pnpm --filter @stellariq/sdk test` - `node:test` suites (engine ranking,
   keys, rate limits, sanitization, full route matrix incl. 429 flow, SDK retry
   - error mapping, live WS reconnect across server restart).
-- E2E: `pnpm test:e2e` — Playwright (overview, navigation, swap validation)
+- E2E: `pnpm test:e2e` - Playwright (overview, navigation, swap validation)
   against a real API + production web build.
 - Contracts: now in `StellarIQLabs/stellariq-contract` (`cargo test`, `cargo fmt`, `cargo clippy`).
 
@@ -198,12 +198,12 @@ docker build -f apps/web/Dockerfile -t stellariq-web \
 
 The API image runs `node dist/index.js` (`HEALTHCHECK` on `/health`); the web
 image runs the Next.js standalone server. `NEXT_PUBLIC_*` values bake in at
-web build time — pass them as build args.
+web build time - pass them as build args.
 
 ## CI
 
 `.github/workflows/ci.yml` (push to `main`, all PRs): Node quality
-(lint+typecheck), Node tests, Node build, Playwright e2e, then image builds — pushed
+(lint+typecheck), Node tests, Node build, Playwright e2e, then image builds - pushed
 to GHCR on `main` only. Contract checks run in `StellarIQLabs/stellariq-contract`.
 
 ## Environment reference

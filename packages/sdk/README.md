@@ -1,6 +1,6 @@
 # @stellariq/sdk
 
-Typed client for the StellarIQ REST and WebSocket APIs — market data, prices,
+Typed client for the StellarIQ REST and WebSocket APIs - market data, prices,
 pools, swaps, quotes, routes and live streams for wallets, bots and agents.
 
 ## Install
@@ -111,7 +111,7 @@ const socket = new StellarIQSocket({ wsUrl, socketImpl: WebSocket });
 ## Auth and tiers
 
 Keys are issued out of band (`POST /v1/keys` with an admin token) and sent
-as `x-api-key`. Tiers — `free`, `developer`, `pro`, `enterprise` — raise the
+as `x-api-key`. Tiers - `free`, `developer`, `pro`, `enterprise` - raise the
 per-minute budget (60 / 600 / 6000 / 60000). Anonymous callers share the free
 budget by IP.
 

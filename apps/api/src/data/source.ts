@@ -64,7 +64,7 @@ export interface DataSource {
     asset: string | undefined,
     timeframe: Timeframe,
   ): SeriesPoint[] | Promise<SeriesPoint[]>;
-  /** Null when either side is unknown — the quote task turns this into 404s. */
+  /** Null when either side is unknown - the quote task turns this into 404s. */
   poolReserves(
     assetA: string,
     assetB: string,

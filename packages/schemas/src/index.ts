@@ -1,4 +1,4 @@
-/** @stellariq/schemas — zod validation at the edge for every API request/response. */
+/** @stellariq/schemas - zod validation at the edge for every API request/response. */
 export * from './common.js';
 export * from './assets.js';
 export * from './prices.js';

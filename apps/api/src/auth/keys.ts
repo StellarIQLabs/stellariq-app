@@ -8,7 +8,7 @@ export const API_TIERS: [ApiTier, ...ApiTier[]] = ['free', 'developer', 'pro', '
 
 export interface ApiKeyRecord {
   id: string;
-  /** First 12 chars of the raw key — safe to log, used for support lookups. */
+  /** First 12 chars of the raw key - safe to log, used for support lookups. */
   prefix: string;
   keyHash: string;
   name: string;
@@ -18,7 +18,7 @@ export interface ApiKeyRecord {
 }
 
 export interface IssuedKey {
-  /** Raw key — shown once at issuance, never stored. */
+  /** Raw key - shown once at issuance, never stored. */
   key: string;
   record: ApiKeyRecord;
 }

@@ -76,7 +76,7 @@ export function RouteBreakdown({ route, bestRouteId, outputAsset }: RouteBreakdo
           Gross output {route.outputAmount.toLocaleString()} minus {totalFees.toLocaleString()} in
           fees leaves {netOutput.toLocaleString()} {outputAsset} after{' '}
           {(route.priceImpact * 100).toFixed(2)}% price impact. The engine recommends the route with
-          the highest net output — a lower fee can still lose when impact or gross output differs.
+          the highest net output - a lower fee can still lose when impact or gross output differs.
         </p>
       </details>
     </Card>

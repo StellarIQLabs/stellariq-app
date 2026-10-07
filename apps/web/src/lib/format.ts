@@ -19,23 +19,23 @@ const priceFormat = new Intl.NumberFormat('en-US', {
 
 /** $12.8M style compact currency. */
 export function formatUsd(value: number | undefined): string {
-  return value === undefined ? '—' : usdCompact.format(value);
+  return value === undefined ? '-' : usdCompact.format(value);
 }
 
 /** 84.3K style compact count. */
 export function formatCount(value: number | undefined): string {
-  return value === undefined ? '—' : plainCompact.format(value);
+  return value === undefined ? '-' : plainCompact.format(value);
 }
 
 /** $0.2374 style price with adaptive precision. */
 export function formatPrice(value: number | undefined): string {
-  return value === undefined ? '—' : priceFormat.format(value);
+  return value === undefined ? '-' : priceFormat.format(value);
 }
 
 /** +2.14% style change, sign included. */
 export function formatChange(value: number | undefined): string {
   if (value === undefined) {
-    return '—';
+    return '-';
   }
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 }

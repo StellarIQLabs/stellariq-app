@@ -10,7 +10,7 @@ import type { RouterInvocation, RouterLeg } from './contracts.js';
 
 export interface SwapTxInput {
   invocation: RouterInvocation;
-  /** User's public key (G...). Never a secret — signing happens in the wallet. */
+  /** User's public key (G...). Never a secret - signing happens in the wallet. */
   userPublicKey: string;
   networkPassphrase: string;
   /**

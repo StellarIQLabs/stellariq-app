@@ -12,7 +12,7 @@ import { useRoutes } from '@/hooks/useRoutes';
 import { useWallet } from '@/hooks/useWallet';
 
 /**
- * Swap terminal (PRD §13–15): quote → route selection → review modal →
+ * Swap terminal (PRD §13-15): quote → route selection → review modal →
  * unsigned transaction → wallet sign → confirmation.
  */
 export function SwapTerminal() {

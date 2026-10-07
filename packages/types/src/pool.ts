@@ -14,7 +14,7 @@ export interface Pool {
   /** Swap fee as a fraction, e.g. 0.003 for 0.30%. */
   fee: number;
   volume24h?: number;
-  /** volume24h / tvl — capital efficiency. */
+  /** volume24h / tvl - capital efficiency. */
   volumeTvlRatio?: number;
   /** Fractional change over 7 days, e.g. 0.34 for +34%. */
   liquidityChange7d?: number;

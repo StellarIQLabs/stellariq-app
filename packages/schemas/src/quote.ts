@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { assetIdSchema, protocolSchema } from './common.js';
 
-/** `GET /v1/quote?from=&to=&amount=` — best execution for a given input. */
+/** `GET /v1/quote?from=&to=&amount=` - best execution for a given input. */
 export const quoteQuerySchema = z.object({
   from: assetIdSchema,
   to: assetIdSchema,
@@ -36,7 +36,7 @@ export const quoteResponseSchema = z.object({
   routeId: z.string(),
 });
 
-/** `GET /v1/routes` — every evaluated route ranked by net output. */
+/** `GET /v1/routes` - every evaluated route ranked by net output. */
 export const routesQuerySchema = quoteQuerySchema;
 
 export const routesResponseSchema = z.object({

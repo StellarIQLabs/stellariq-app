@@ -15,7 +15,7 @@ import { docsRoutes } from './docs.js';
 export type RouteModule = (app: FastifyInstance, source: DataSource) => void | Promise<void>;
 
 /**
- * Modular route registry — every PRD §17 domain adds its module here.
+ * Modular route registry - every PRD §17 domain adds its module here.
  * Domain tasks append their module; nothing else changes.
  */
 export const routeModules: RouteModule[] = [

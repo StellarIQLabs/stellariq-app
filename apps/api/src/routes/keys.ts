@@ -11,7 +11,7 @@ const issueSchema = z.object({
 
 /**
  * Key issuance and revocation endpoints, guarded by the admin token. Absent
- * `ADMIN_TOKEN` means all mutation endpoints are disabled (403) — keys are
+ * `ADMIN_TOKEN` means all mutation endpoints are disabled (403) - keys are
  * then provisioned out of band.
  */
 export async function keyRoutes(app: FastifyInstance, keys: KeyStore, env: ApiEnv): Promise<void> {

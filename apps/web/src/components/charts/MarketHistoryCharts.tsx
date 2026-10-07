@@ -40,7 +40,7 @@ function createThemedChart(container: HTMLElement): IChartApi {
 
 function rangeChange(first: number | undefined, last: number | undefined): string {
   if (first === undefined || last === undefined || first === 0) {
-    return '—';
+    return '-';
   }
   const pct = ((last - first) / first) * 100;
   return `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}% over range`;
@@ -136,7 +136,7 @@ export function MarketHistoryCharts({
         ) : candles.length === 0 ? (
           <EmptyState
             title="No volume history for this range"
-            hint="Try another timeframe — newly indexed pairs may not have history yet."
+            hint="Try another timeframe - newly indexed pairs may not have history yet."
           />
         ) : (
           <div
@@ -162,7 +162,7 @@ export function MarketHistoryCharts({
         ) : liquidity.length === 0 ? (
           <EmptyState
             title="No liquidity history for this range"
-            hint="Try another timeframe — newly indexed pairs may not have history yet."
+            hint="Try another timeframe - newly indexed pairs may not have history yet."
           />
         ) : (
           <div

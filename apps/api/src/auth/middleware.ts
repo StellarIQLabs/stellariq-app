@@ -12,8 +12,8 @@ declare module 'fastify' {
 const HEADER = 'x-api-key';
 
 /**
- * Header validation for `x-api-key`. Keys are optional on public reads —
- * anonymous callers proceed as `free` — but a present-but-unknown key is
+ * Header validation for `x-api-key`. Keys are optional on public reads -
+ * anonymous callers proceed as `free` - but a present-but-unknown key is
  * rejected so leaked or revoked keys fail loudly.
  */
 export async function registerAuth(app: FastifyInstance, keys: KeyStore): Promise<void> {

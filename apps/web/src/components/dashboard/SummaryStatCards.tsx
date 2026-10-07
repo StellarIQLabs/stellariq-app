@@ -12,7 +12,7 @@ interface CardState {
   error: string | null;
 }
 
-const initial: CardState = { value: '—', loading: true, error: null };
+const initial: CardState = { value: '-', loading: true, error: null };
 
 function seriesChange(first: number | undefined, last: number | undefined): number | undefined {
   if (first === undefined || last === undefined || first === 0) {
@@ -22,7 +22,7 @@ function seriesChange(first: number | undefined, last: number | undefined): numb
 }
 
 /**
- * Network summary cards — 24h volume, TVL and indexed swap count — wired to
+ * Network summary cards - 24h volume, TVL and indexed swap count - wired to
  * the analytics API with per-card loading and error states.
  */
 export function SummaryStatCards() {
@@ -51,7 +51,7 @@ export function SummaryStatCards() {
       })
       .catch((err: unknown) => {
         if (!signal.aborted) {
-          setVolume({ value: '—', loading: false, error: failureMessage(err) });
+          setVolume({ value: '-', loading: false, error: failureMessage(err) });
         }
       });
 
@@ -71,7 +71,7 @@ export function SummaryStatCards() {
       })
       .catch((err: unknown) => {
         if (!signal.aborted) {
-          setTvl({ value: '—', loading: false, error: failureMessage(err) });
+          setTvl({ value: '-', loading: false, error: failureMessage(err) });
         }
       });
 
@@ -83,7 +83,7 @@ export function SummaryStatCards() {
       })
       .catch((err: unknown) => {
         if (!signal.aborted) {
-          setTrades({ value: '—', loading: false, error: failureMessage(err) });
+          setTrades({ value: '-', loading: false, error: failureMessage(err) });
         }
       });
 

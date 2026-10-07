@@ -76,7 +76,7 @@ export async function evaluateRoutes(
   const direct = await source.poolReserves(from, to);
   const routes: SwapRoute[] = [];
 
-  // Route A — best direct pool.
+  // Route A - best direct pool.
   let bestDirect: PoolReserve | null = null;
   let bestDirectOut = 0;
   for (const pool of direct) {
@@ -110,7 +110,7 @@ export async function evaluateRoutes(
     );
   }
 
-  // Route B — best two-hop path through an intermediary asset.
+  // Route B - best two-hop path through an intermediary asset.
   let bestHop: { mid: string; first: PoolReserve; second: PoolReserve; out: number } | null = null;
   for (const mid of INTERMEDIARIES) {
     if (mid === from || mid === to) {
@@ -159,7 +159,7 @@ export async function evaluateRoutes(
     );
   }
 
-  // Route C — split across the two best direct pools.
+  // Route C - split across the two best direct pools.
   const ranked = [...direct]
     .map((pool) => ({
       pool,
@@ -199,7 +199,7 @@ export async function evaluateRoutes(
     );
   }
 
-  // Rank by net output — never by headline fee alone (PRD §14).
+  // Rank by net output - never by headline fee alone (PRD §14).
   const net = (r: SwapRoute): number => r.outputAmount - r.networkFee - r.protocolFee;
   routes.sort((a, b) => net(b) - net(a));
   const winner = routes[0];

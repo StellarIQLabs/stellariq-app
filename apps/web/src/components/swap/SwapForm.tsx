@@ -122,7 +122,7 @@ export function SwapForm({ onSubmit, pending = false }: SwapFormProps) {
             >
               {assets.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {a.code} — {formatPrice(a.price)}
+                  {a.code} - {formatPrice(a.price)}
                 </option>
               ))}
             </select>
@@ -154,7 +154,7 @@ export function SwapForm({ onSubmit, pending = false }: SwapFormProps) {
             >
               {assets.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {a.code} — {formatPrice(a.price)}
+                  {a.code} - {formatPrice(a.price)}
                 </option>
               ))}
             </select>

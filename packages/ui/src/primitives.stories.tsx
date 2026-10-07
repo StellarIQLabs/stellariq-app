@@ -15,11 +15,11 @@ export const Volume: Story = {
 };
 
 export const Loading: Story = {
-  args: { label: 'TVL', value: '—', loading: true },
+  args: { label: 'TVL', value: '-', loading: true },
 };
 
 export const ErrorState: Story = {
-  args: { label: 'Trades', value: '—', error: 'Upstream data unavailable' },
+  args: { label: 'Trades', value: '-', error: 'Upstream data unavailable' },
 };
 
 export const Tones: Story = {

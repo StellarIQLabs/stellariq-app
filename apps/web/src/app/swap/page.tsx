@@ -3,7 +3,7 @@ import { WalletButton } from '@/components/swap/WalletButton';
 
 export const metadata = { title: 'Swap' };
 
-// Swap terminal (PRD §13–15): best-execution quotes across Stellar routes.
+// Swap terminal (PRD §13-15): best-execution quotes across Stellar routes.
 // You always keep custody of your keys.
 export default function SwapPage() {
   return (

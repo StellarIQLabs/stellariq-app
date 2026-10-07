@@ -33,7 +33,7 @@ export function getWebEnv(): WebEnv {
   // NOTE: each NEXT_PUBLIC_* var MUST be referenced as a static literal
   // (process.env.NEXT_PUBLIC_X) so Next.js can inline it into the browser
   // bundle at build time. Dynamic access (process.env[name]) is NOT inlined
-  // and silently falls back — which shipped localhost URLs to production.
+  // and silently falls back - which shipped localhost URLs to production.
   const swapRouterId = optional(process.env.NEXT_PUBLIC_SWAP_ROUTER_ID);
   cached ??= {
     apiBaseUrl: required(

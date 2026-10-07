@@ -83,7 +83,7 @@ export function SwapReviewModal({
     } catch (err: unknown) {
       setError(
         err instanceof ContractNotDeployedError
-          ? 'The swap router is not deployed on this network yet — quoting stays available.'
+          ? 'The swap router is not deployed on this network yet - quoting stays available.'
           : err instanceof Error
             ? err.message
             : 'Transaction generation failed.',

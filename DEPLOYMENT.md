@@ -8,7 +8,7 @@ are built and verified in CI):
 | API     | `apps/api` | 4000 | Fastify. Falls back to in-memory mock data. |
 | Web     | `apps/web` | 3000 | Next.js standalone dashboard.               |
 
-For a demo you do **not** need Postgres or Redis — leave `DATA_API_URL` unset and
+For a demo you do **not** need Postgres or Redis - leave `DATA_API_URL` unset and
 the API serves realistic mock data on its own.
 
 `railway.json` config-as-code files live next to each service
@@ -16,7 +16,7 @@ the API serves realistic mock data on its own.
 
 ---
 
-## Option A — Railway (both services, recommended)
+## Option A - Railway (both services, recommended)
 
 Deploy the **API first** (the web build needs the API's public URL baked in).
 
@@ -24,7 +24,7 @@ Deploy the **API first** (the web build needs the API's public URL baked in).
 
 1. New Project → **Deploy from GitHub repo** → pick `StellarIQLabs/stellariq-app`.
 2. Service → **Settings**:
-   - **Root Directory**: `/` (repo root — the Dockerfile copies workspace packages)
+   - **Root Directory**: `/` (repo root - the Dockerfile copies workspace packages)
    - **Config-as-code path**: `apps/api/railway.json`
 3. Service → **Variables**:
    ```
@@ -44,7 +44,7 @@ Deploy the **API first** (the web build needs the API's public URL baked in).
 2. Service → **Settings**:
    - **Root Directory**: `/`
    - **Config-as-code path**: `apps/web/railway.json`
-3. Service → **Variables** (these are `NEXT_PUBLIC_*`, baked at build — Railway
+3. Service → **Variables** (these are `NEXT_PUBLIC_*`, baked at build - Railway
    passes them to the Docker build automatically):
    ```
    NEXT_PUBLIC_API_BASE_URL=https://<api-domain>
@@ -61,7 +61,7 @@ Deploy the **API first** (the web build needs the API's public URL baked in).
 
 ---
 
-## Option B — Web on Vercel instead (optional)
+## Option B - Web on Vercel instead (optional)
 
 You do **not** need Vercel if you use Railway for both. Vercel is only if you
 want the frontend specifically on it; you'd still host the API on Railway.
@@ -70,7 +70,7 @@ On Vercel: **New Project → import the repo →**
 
 - **Root Directory**: `apps/web` (Vercel auto-includes the pnpm workspace)
 - **Framework preset**: Next.js
-- **Build Command** (override — the workspace packages export from `dist/` and
+- **Build Command** (override - the workspace packages export from `dist/` and
   must be built before `next build`):
   ```
   pnpm --filter @stellariq/types --filter @stellariq/schemas --filter @stellariq/sdk --filter @stellariq/ui build && pnpm --filter @stellariq/web build

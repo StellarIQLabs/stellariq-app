@@ -86,7 +86,7 @@ export function BestExecutionCard({
           </dl>
           {quote.priceImpact >= 0.025 && (
             <p role="alert" className="mt-3 text-xs font-medium text-negative">
-              ⚠️ High price impact — consider a smaller trade amount or multi-hop routing.
+              ⚠️ High price impact - consider a smaller trade amount or multi-hop routing.
             </p>
           )}
           {refreshing && (

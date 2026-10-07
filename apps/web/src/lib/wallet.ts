@@ -55,7 +55,7 @@ export interface SubmitResult {
 
 /**
  * Submits a wallet-signed transaction to Soroban RPC and polls until it
- * leaves PENDING. Private keys never touch this code path — signing happens
+ * leaves PENDING. Private keys never touch this code path - signing happens
  * exclusively inside the wallet extension.
  */
 export async function submitSignedTransaction(

@@ -79,7 +79,7 @@ export function PoolDetail({ poolId }: { poolId: string }) {
         <Stat label="Volume 24h" value={formatUsd(pool.volume24h)} />
         <Stat
           label="Volume / TVL"
-          value={pool.volumeTvlRatio !== undefined ? pool.volumeTvlRatio.toFixed(3) : '—'}
+          value={pool.volumeTvlRatio !== undefined ? pool.volumeTvlRatio.toFixed(3) : '-'}
           hint="Capital efficiency"
         />
         <Stat label="Fee tier" value={`${(pool.fee * 100).toFixed(2)}%`} />
@@ -113,7 +113,7 @@ export function PoolDetail({ poolId }: { poolId: string }) {
           <p className="font-mono text-3xl font-semibold">
             {pool.estimatedPriceImpact !== undefined
               ? `${(pool.estimatedPriceImpact * 100).toFixed(2)}%`
-              : '—'}
+              : '-'}
           </p>
           <p className="mt-2 text-sm text-muted">
             Estimated impact for a reference trade against current reserves. Larger trades move this

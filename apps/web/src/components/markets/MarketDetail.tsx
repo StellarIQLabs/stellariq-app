@@ -82,7 +82,7 @@ export function MarketDetail({ pair }: { pair: string }) {
         <Stat label="Trades 24h" value={formatCount(market.trades24h)} />
         <Stat
           label="Spread"
-          value={market.spread !== undefined ? `${(market.spread * 100).toFixed(2)}%` : '—'}
+          value={market.spread !== undefined ? `${(market.spread * 100).toFixed(2)}%` : '-'}
         />
       </section>
 

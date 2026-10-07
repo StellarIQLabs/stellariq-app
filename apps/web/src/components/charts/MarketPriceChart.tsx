@@ -156,7 +156,7 @@ export function MarketPriceChart({
       ) : candles.length === 0 ? (
         <EmptyState
           title="No price history for this range"
-          hint="Try another timeframe — newly indexed pairs may not have history yet."
+          hint="Try another timeframe - newly indexed pairs may not have history yet."
         />
       ) : (
         <div

@@ -83,7 +83,7 @@ function retryAfterMs(header: string | null, attempt: number): number {
 /**
  * Typed REST client for the StellarIQ API (PRD §17, §27 SDK): every endpoint
  * wrapped with timeouts, retries on 429/5xx honoring `Retry-After`, and
- * typed errors — so wallets and bots consume market data in a few lines.
+ * typed errors - so wallets and bots consume market data in a few lines.
  */
 export class StellarIQClient {
   private readonly baseUrl: string;

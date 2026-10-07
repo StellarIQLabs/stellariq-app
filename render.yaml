@@ -1,4 +1,4 @@
-# Render blueprint — deploys the StellarIQ API (Fastify) on the free tier.
+# Render blueprint - deploys the StellarIQ API (Fastify) on the free tier.
 # The web dashboard is deployed separately on Vercel and points at this API.
 #
 # Free-tier note: the service sleeps after ~15 min idle, so the first request
