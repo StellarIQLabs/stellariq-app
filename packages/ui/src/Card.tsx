@@ -12,7 +12,7 @@ export interface CardProps {
 export function Card({ title, subtitle, action, children, className }: CardProps) {
   return (
     <section
-      className={clsx('rounded-lg border border-border bg-surface p-5 shadow-sm', className)}
+      className={clsx('rounded-lg border border-border bg-surface p-5 shadow-card', className)}
     >
       {(title ?? action) && (
         <header className="mb-4 flex items-start justify-between gap-4">

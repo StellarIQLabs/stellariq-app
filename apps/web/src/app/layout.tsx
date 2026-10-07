@@ -4,7 +4,7 @@ import './globals.css';
 
 export const metadata = {
   title: {
-    default: 'StellarIQ — Intelligence for Stellar DeFi',
+    default: 'StellarIQ - Intelligence for Stellar DeFi',
     template: '%s · StellarIQ',
   },
   description:
@@ -16,6 +16,14 @@ export const metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        />
+      </head>
       <body className="min-h-screen bg-background font-sans text-text antialiased">
         <AppShell>{children}</AppShell>
       </body>
