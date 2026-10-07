@@ -19,4 +19,4 @@ services:
       - key: API_KEY_SALT
         generateValue: true # Render generates a strong random value
       - key: DATA_API_URL
-        value: '' # empty → built-in mock data (no DB needed)
+        value: 'https://stellariq-data-api.onrender.com' # live data service; app falls back to built-in data if it is unreachable
