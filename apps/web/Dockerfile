@@ -1,4 +1,4 @@
-# StellarIQ Web — production image with multi-stage build, non-root user
+# StellarIQ Web - production image with multi-stage build, non-root user
 # and env injection. Compatible with the stellariq-infra deployment.
 FROM node:20-slim AS base
 ENV PNPM_HOME=/pnpm
