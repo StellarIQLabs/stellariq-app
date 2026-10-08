@@ -1,4 +1,4 @@
-# Render blueprint - deploys the StellarIQ API (Fastify) on the free tier.
+# Render blueprint - deploys the StellarIQ Give API (Fastify) on the free tier.
 # The web dashboard is deployed separately on Vercel and points at this API.
 #
 # Free-tier note: the service sleeps after ~15 min idle, so the first request
@@ -20,3 +20,7 @@ services:
         generateValue: true # Render generates a strong random value
       - key: DATA_API_URL
         value: 'https://stellariq-data-api.onrender.com' # live data service; app falls back to built-in data if it is unreachable
+      - key: DONATIONS_CONTRACT_ID
+        value: 'CBCHKIDRFJ4KO2DGJEP75NJPYN65YVD6QOVVHC5IU7PRTHGHW75OF2KX' # StellarIQ Give donations contract (testnet)
+      - key: SOROBAN_RPC_URL
+        value: 'https://soroban-testnet.stellar.org'
