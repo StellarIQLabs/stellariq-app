@@ -41,14 +41,18 @@ export function buildOpenApiDocument(): Record<string, unknown> {
   return {
     openapi: '3.0.3',
     info: {
-      title: 'StellarIQ API',
+      title: 'StellarIQ Give API',
       version,
       description:
-        'Intelligence for Stellar DeFi: assets, prices, markets, pools, swaps, quotes, routes and analytics.',
+        'Transparent charity donations on Stellar: campaigns and receipts read live from the donations contract, plus the market data used to convert donations.',
     },
-    servers: [{ url: 'http://localhost:4000', description: 'Local development' }],
+    servers: [
+      { url: '/', description: 'This server' },
+      { url: 'http://localhost:4000', description: 'Local development' },
+    ],
     tags: [
       { name: 'system', description: 'Probes' },
+      { name: 'donations', description: 'StellarIQ Give campaigns and receipts' },
       { name: 'assets' },
       { name: 'prices' },
       { name: 'markets' },
@@ -60,6 +64,131 @@ export function buildOpenApiDocument(): Record<string, unknown> {
       { name: 'keys' },
     ],
     paths: {
+      '/v1/campaigns': {
+        get: {
+          tags: ['donations'],
+          summary: 'List donation campaigns',
+          parameters: [
+            {
+              name: 'status',
+              in: 'query',
+              schema: { type: 'string', enum: ['active', 'ended', 'closed'] },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Campaigns read from the donations contract',
+              content: { 'application/json': { schema: { type: 'object' } } },
+            },
+            ...errorResponses(),
+          },
+        },
+      },
+      '/v1/campaigns/{id}': {
+        get: {
+          tags: ['donations'],
+          summary: 'Get one campaign',
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: { type: 'integer', minimum: 1 },
+              example: 1,
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Campaign',
+              content: { 'application/json': { schema: { type: 'object' } } },
+            },
+            ...errorResponses(),
+          },
+        },
+      },
+      '/v1/campaigns/{id}/donations': {
+        get: {
+          tags: ['donations'],
+          summary: 'Latest donations to a campaign',
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: { type: 'integer', minimum: 1 },
+              example: 1,
+            },
+            {
+              name: 'limit',
+              in: 'query',
+              schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Donation receipts, newest first',
+              content: { 'application/json': { schema: { type: 'object' } } },
+            },
+            ...errorResponses(),
+          },
+        },
+      },
+      '/v1/donations': {
+        get: {
+          tags: ['donations'],
+          summary: 'Latest donations across all campaigns',
+          parameters: [
+            {
+              name: 'limit',
+              in: 'query',
+              schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Donation receipts, newest first',
+              content: { 'application/json': { schema: { type: 'object' } } },
+            },
+            ...errorResponses(),
+          },
+        },
+      },
+      '/v1/donations/stats': {
+        get: {
+          tags: ['donations'],
+          summary: 'Giving totals',
+          parameters: [],
+          responses: {
+            '200': {
+              description: 'Total raised, donations, donors and active campaigns',
+              content: { 'application/json': { schema: { type: 'object' } } },
+            },
+            ...errorResponses(),
+          },
+        },
+      },
+      '/v1/receipts/{id}': {
+        get: {
+          tags: ['donations'],
+          summary: 'Get a donation receipt',
+          parameters: [
+            {
+              name: 'id',
+              in: 'path',
+              required: true,
+              schema: { type: 'integer', minimum: 1 },
+              example: 1,
+            },
+          ],
+          responses: {
+            '200': {
+              description: 'Receipt',
+              content: { 'application/json': { schema: { type: 'object' } } },
+            },
+            ...errorResponses(),
+          },
+        },
+      },
       '/health': {
         get: {
           tags: ['system'],
