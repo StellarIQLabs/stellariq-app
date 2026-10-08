@@ -33,8 +33,8 @@ export default function GivePage() {
         />
         <Step
           n={2}
-          title="Donate with Freighter"
-          body="Sign once in your wallet. Funds move directly to the charity."
+          title="Donate from your wallet"
+          body="Freighter, Albedo, xBull and more. Sign once; funds move directly to the charity."
         />
         <Step
           n={3}

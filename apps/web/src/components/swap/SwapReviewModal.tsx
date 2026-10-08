@@ -9,7 +9,7 @@ import type { QuoteRequest } from '@/lib/api';
 import { ContractNotDeployedError, StubRouterClient } from '@/lib/contracts';
 import { getWebEnv } from '@/lib/env';
 import { buildSwapTransactionXdr } from '@/lib/txBuilder';
-import { FreighterWallet, submitSignedTransaction } from '@/lib/wallet';
+import { StellarWallet, submitSignedTransaction } from '@/lib/wallet';
 
 export interface SwapReviewModalProps {
   request: QuoteRequest;
@@ -99,7 +99,7 @@ export function SwapReviewModal({
     setStage('signing');
     setError(null);
     try {
-      const wallet = new FreighterWallet();
+      const wallet = new StellarWallet();
       const { signedXdr } = await wallet.signTransaction(unsignedXdr, passphrase);
       setStage('submitting');
       const result = await submitSignedTransaction(signedXdr, env.sorobanRpcUrl);

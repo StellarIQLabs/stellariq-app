@@ -12,7 +12,7 @@ import {
   type Campaign,
   type DonateResult,
 } from '@/lib/donations';
-import { FreighterWallet } from '@/lib/wallet';
+import { StellarWallet } from '@/lib/wallet';
 
 const PRESETS = ['10', '25', '100'];
 
@@ -21,7 +21,7 @@ type Phase = 'idle' | 'building' | 'signing' | 'submitting' | 'done';
 const PHASE_LABEL: Record<Phase, string> = {
   idle: 'Donate',
   building: 'Preparing…',
-  signing: 'Confirm in Freighter…',
+  signing: 'Confirm in your wallet…',
   submitting: 'Sending to Stellar…',
   done: 'Donate again',
 };
@@ -33,7 +33,7 @@ export function DonateForm({
   campaign: Campaign;
   onDonated?: (result: DonateResult) => void;
 }) {
-  const { publicKey, connecting, available, connect, error: walletError } = useWallet();
+  const { publicKey, connecting, connect, error: walletError } = useWallet();
   const [amount, setAmount] = useState('25');
   const [memo, setMemo] = useState('');
   const [phase, setPhase] = useState<Phase>('idle');
@@ -64,10 +64,7 @@ export function DonateForm({
         memo,
       });
       setPhase('signing');
-      const { signedXdr } = await new FreighterWallet().signTransaction(
-        unsigned,
-        networkPassphrase,
-      );
+      const { signedXdr } = await new StellarWallet().signTransaction(unsigned, networkPassphrase);
       setPhase('submitting');
       const res = await submitDonation(signedXdr);
       setResult(res);
@@ -137,18 +134,11 @@ export function DonateForm({
       {!publicKey ? (
         <div className="flex flex-col gap-2">
           <Button loading={connecting} onClick={() => void connect()}>
-            Connect Freighter to donate
+            Connect a wallet to donate
           </Button>
-          {!available && (
-            <a
-              href="https://www.freighter.app/"
-              target="_blank"
-              rel="noreferrer"
-              className="text-center text-xs text-accent hover:underline"
-            >
-              Install Freighter (set it to Testnet)
-            </a>
-          )}
+          <p className="text-center text-xs text-muted">
+            Freighter, Albedo (no install needed), xBull, Rabet, Hana or LOBSTR. Use Testnet.
+          </p>
         </div>
       ) : (
         <div className="flex flex-col gap-2">

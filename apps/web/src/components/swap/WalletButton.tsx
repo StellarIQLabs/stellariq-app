@@ -3,9 +3,9 @@
 import { Button } from '@stellariq/ui';
 import { truncateKey, useWallet } from '@/hooks/useWallet';
 
-/** Connect/disconnect control for the Freighter wallet. */
+/** Connect/disconnect control; opens a picker for any supported Stellar wallet. */
 export function WalletButton() {
-  const { publicKey, connecting, error, available, connect, disconnect } = useWallet();
+  const { publicKey, connecting, error, connect, disconnect } = useWallet();
 
   if (publicKey) {
     return (
@@ -20,20 +20,6 @@ export function WalletButton() {
           Disconnect
         </Button>
       </span>
-    );
-  }
-
-  if (!available) {
-    return (
-      <a
-        href="https://www.freighter.app/"
-        target="_blank"
-        rel="noreferrer"
-        title="Install Freighter and switch it to Testnet"
-        className="inline-flex h-9 items-center whitespace-nowrap rounded-md border border-border px-3 text-sm font-medium text-text hover:border-accent"
-      >
-        Install Freighter
-      </a>
     );
   }
 
