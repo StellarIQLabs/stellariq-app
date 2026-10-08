@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Badge } from '@stellariq/ui';
 import { getWebEnv } from '@/lib/env';
+import { WalletButton } from '@/components/swap/WalletButton';
 
 export function SiteHeader({ onMenuClick }: { onMenuClick: () => void }) {
   const { stellarNetwork } = getWebEnv();
@@ -24,16 +25,21 @@ export function SiteHeader({ onMenuClick }: { onMenuClick: () => void }) {
         </button>
         <Link href="/" className="flex items-center gap-2" aria-label="StellarIQ Give home">
           <img src="/icon.svg" alt="" width={32} height={32} className="h-8 w-8" />
-          <span className="text-base font-bold tracking-tight">StellarIQ Give</span>
+          <span className="whitespace-nowrap text-base font-bold tracking-tight">
+            StellarIQ Give
+          </span>
         </Link>
-        <Badge tone="accent">{stellarNetwork}</Badge>
+        <Badge tone="accent" className="hidden sm:inline-flex">
+          {stellarNetwork}
+        </Badge>
         <div className="ml-auto flex items-center gap-3">
           <Link
             href="/"
-            className="rounded-md bg-positive px-4 py-2 text-sm font-medium text-white hover:brightness-110"
+            className="hidden rounded-md bg-positive px-4 py-2 text-sm font-medium text-white hover:brightness-110 sm:inline-block"
           >
             Donate
           </Link>
+          <WalletButton />
         </div>
       </div>
     </header>
