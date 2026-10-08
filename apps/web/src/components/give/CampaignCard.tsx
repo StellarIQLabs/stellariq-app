@@ -24,7 +24,7 @@ export function CampaignCard({ campaign }: { campaign: Campaign }) {
           <span className="text-muted"> of {formatAmount(campaign.goal, symbol)}</span>
         </span>
         <span className="text-muted">
-          {campaign.donorCount} donors
+          {campaign.donorCount} {campaign.donorCount === 1 ? 'donor' : 'donors'}
           {campaign.status === 'active' ? ` · ${daysLeft(campaign.deadline)} days left` : ''}
         </span>
       </div>
