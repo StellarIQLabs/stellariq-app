@@ -1,59 +1,110 @@
 import { TransactionBuilder, rpc } from '@stellar/stellar-sdk';
-import {
-  isConnected,
-  requestAccess,
-  signTransaction as freighterSign,
-} from '@stellar/freighter-api';
+import type { StellarWalletsKit } from '@creit.tech/stellar-wallets-kit/sdk';
 
 export interface SignResult {
   signedXdr: string;
 }
 
 export interface WalletProvider {
-  readonly id: 'freighter';
-  /** Resolves false when the extension is not installed (server-side included). */
+  /** Resolves false when no wallet UI can be shown (server-side). */
   detect(): Promise<boolean>;
+  /** Opens the wallet picker and returns the chosen account. */
   getPublicKey(): Promise<string>;
   signTransaction(xdr: string, networkPassphrase: string): Promise<SignResult>;
+  disconnect(): Promise<void>;
+}
+
+type Kit = typeof StellarWalletsKit;
+
+const WALLET_ID_KEY = 'siq-wallet-id';
+let kitPromise: Promise<Kit> | null = null;
+
+/**
+ * Loads Stellar Wallets Kit on first use, in the browser only. The kit and its
+ * wallet modules are heavy, so they stay out of the server bundle and out of
+ * pages that never touch a wallet.
+ */
+function loadKit(): Promise<Kit> {
+  kitPromise ??= (async () => {
+    const [sdk, types, freighter, albedo, xbull, rabet, hana, lobstr] = await Promise.all([
+      import('@creit.tech/stellar-wallets-kit/sdk'),
+      import('@creit.tech/stellar-wallets-kit/types'),
+      import('@creit.tech/stellar-wallets-kit/modules/freighter'),
+      import('@creit.tech/stellar-wallets-kit/modules/albedo'),
+      import('@creit.tech/stellar-wallets-kit/modules/xbull'),
+      import('@creit.tech/stellar-wallets-kit/modules/rabet'),
+      import('@creit.tech/stellar-wallets-kit/modules/hana'),
+      import('@creit.tech/stellar-wallets-kit/modules/lobstr'),
+    ]);
+    const kit = sdk.StellarWalletsKit;
+    const selectedWalletId = window.localStorage.getItem(WALLET_ID_KEY) ?? undefined;
+    kit.init({
+      modules: [
+        new freighter.FreighterModule(),
+        new albedo.AlbedoModule(),
+        new xbull.xBullModule(),
+        new rabet.RabetModule(),
+        new hana.HanaModule(),
+        new lobstr.LobstrModule(),
+      ],
+      network: types.Networks.TESTNET,
+      theme: types.SwkAppDarkTheme,
+      authModal: { showInstallLabel: true },
+      ...(selectedWalletId ? { selectedWalletId } : {}),
+    });
+    return kit;
+  })();
+  return kitPromise;
+}
+
+function message(err: unknown, fallback: string): string {
+  if (err instanceof Error && err.message) return err.message;
+  if (typeof err === 'object' && err !== null && 'message' in err) {
+    return String((err as { message: unknown }).message);
+  }
+  return fallback;
 }
 
 /**
- * Freighter via the official `@stellar/freighter-api` bridge. Current
- * Freighter builds no longer inject `window.freighterApi`, so the bridge is
- * the only reliable way to talk to the extension.
+ * Any Stellar wallet through Stellar Wallets Kit: Freighter, Albedo (no
+ * install needed), xBull, Rabet, Hana and LOBSTR. Signing always happens
+ * inside the wallet; secrets never reach this app.
  */
-export class FreighterWallet implements WalletProvider {
-  readonly id = 'freighter' as const;
-
+export class StellarWallet implements WalletProvider {
   async detect(): Promise<boolean> {
-    if (typeof window === 'undefined') {
-      return false;
-    }
-    try {
-      const res = await isConnected();
-      return !res.error && res.isConnected;
-    } catch {
-      return false;
-    }
+    return typeof window !== 'undefined';
   }
 
   async getPublicKey(): Promise<string> {
-    if (!(await this.detect())) {
-      throw new Error('Freighter is not installed. Install it to connect a wallet.');
+    const kit = await loadKit();
+    try {
+      const { address } = await kit.authModal();
+      window.localStorage.setItem(WALLET_ID_KEY, kit.selectedModule.productId);
+      return address;
+    } catch (err: unknown) {
+      throw new Error(message(err, 'Wallet connection was cancelled.'));
     }
-    const res = await requestAccess();
-    if (res.error || !res.address) {
-      throw new Error(res.error?.message ?? 'Freighter did not share an address.');
-    }
-    return res.address;
   }
 
   async signTransaction(xdr: string, networkPassphrase: string): Promise<SignResult> {
-    const res = await freighterSign(xdr, { networkPassphrase });
-    if (res.error || !res.signedTxXdr) {
-      throw new Error(res.error?.message ?? 'Signing was cancelled in Freighter.');
+    const kit = await loadKit();
+    const address = window.localStorage.getItem('siq-wallet') ?? undefined;
+    try {
+      const res = await kit.signTransaction(xdr, {
+        networkPassphrase,
+        ...(address ? { address } : {}),
+      });
+      return { signedXdr: res.signedTxXdr };
+    } catch (err: unknown) {
+      throw new Error(message(err, 'Signing was cancelled in your wallet.'));
     }
-    return { signedXdr: res.signedTxXdr };
+  }
+
+  async disconnect(): Promise<void> {
+    window.localStorage.removeItem(WALLET_ID_KEY);
+    if (kitPromise) {
+      await (await kitPromise).disconnect().catch(() => undefined);
+    }
   }
 }
 
