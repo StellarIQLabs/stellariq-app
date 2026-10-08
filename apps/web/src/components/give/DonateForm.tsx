@@ -57,7 +57,7 @@ export function DonateForm({
     setResult(null);
     try {
       setPhase('building');
-      const unsigned = await buildDonateTransaction({
+      const { xdr: unsigned, networkPassphrase } = await buildDonateTransaction({
         donor: publicKey,
         campaignId: campaign.id,
         amount,
@@ -66,7 +66,7 @@ export function DonateForm({
       setPhase('signing');
       const { signedXdr } = await new FreighterWallet().signTransaction(
         unsigned,
-        'Test SDF Network ; September 2015',
+        networkPassphrase,
       );
       setPhase('submitting');
       const res = await submitDonation(signedXdr);

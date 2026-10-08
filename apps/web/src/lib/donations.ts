@@ -125,7 +125,9 @@ export interface DonateInput {
  * Builds and prepares (simulates, adds footprint and fees) an unsigned
  * `donate` transaction. The wallet signs it; StellarIQ never sees a secret.
  */
-export async function buildDonateTransaction(input: DonateInput): Promise<string> {
+export async function buildDonateTransaction(
+  input: DonateInput,
+): Promise<{ xdr: string; networkPassphrase: string }> {
   const env = getWebEnv();
   const server = new rpc.Server(env.sorobanRpcUrl);
   const { passphrase } = await server.getNetwork();
@@ -148,14 +150,13 @@ export async function buildDonateTransaction(input: DonateInput): Promise<string
     .build();
   try {
     const prepared = await server.prepareTransaction(tx);
-    return prepared.toXDR();
+    return { xdr: prepared.toXDR(), networkPassphrase: passphrase };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
     if (/#9\b/.test(msg)) throw new Error('This campaign is closed.');
     if (/#10\b/.test(msg)) throw new Error('This campaign has ended.');
     if (/#13\b/.test(msg)) throw new Error('The beneficiary cannot donate to their own campaign.');
-    if (/balance|#10\)|insufficient/i.test(msg))
-      throw new Error('Not enough XLM for this donation.');
+    if (/balance|insufficient/i.test(msg)) throw new Error('Not enough funds for this donation.');
     throw new Error('The network rejected this donation during simulation.');
   }
 }
