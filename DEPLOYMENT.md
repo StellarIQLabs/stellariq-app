@@ -93,3 +93,35 @@ pnpm install
 pnpm dev:api   # terminal 1 → http://localhost:4000
 pnpm dev:web   # terminal 2 → http://localhost:3000
 ```
+
+---
+
+## Keeping the demo awake (Render free tier)
+
+Render sleeps a free service after about 15 minutes without traffic. Two
+layers keep the API warm for reviewers:
+
+1. **GitHub Actions** - `.github/workflows/keep-warm.yml` pings `/health`
+   every 12 minutes. GitHub may delay scheduled runs, so it is best-effort.
+2. **cron-job.org** (recommended as the primary pinger):
+   - Create a free account at https://cron-job.org and click **Create cronjob**.
+   - **URL**: `https://stellariq-api-p1hz.onrender.com/health`
+   - **Schedule**: every 10 minutes.
+   - Under **Advanced**, set the request timeout to 30 seconds.
+   - Save, then add a second job for
+     `https://stellariq-data-api.onrender.com/health` with the same settings.
+   - The job history should show HTTP 200 within a few runs.
+
+## StellarIQ Give on Vercel
+
+`apps/web/vercel.json` holds the install and build commands, so the only
+project settings needed are **Root Directory** `apps/web` and these
+environment variables:
+
+```
+NEXT_PUBLIC_API_BASE_URL=https://stellariq-api-p1hz.onrender.com
+NEXT_PUBLIC_WS_URL=wss://stellariq-api-p1hz.onrender.com/ws
+NEXT_PUBLIC_STELLAR_NETWORK=testnet
+NEXT_PUBLIC_DONATIONS_CONTRACT_ID=CBCHKIDRFJ4KO2DGJEP75NJPYN65YVD6QOVVHC5IU7PRTHGHW75OF2KX
+NEXT_PUBLIC_SWAP_ROUTER_ID=CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP
+```
