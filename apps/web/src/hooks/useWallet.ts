@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { FreighterWallet, truncateKey } from '@/lib/wallet';
+import { StellarWallet, truncateKey } from '@/lib/wallet';
 
 export interface WalletState {
   publicKey: string | null;
@@ -12,12 +12,12 @@ export interface WalletState {
   disconnect: () => void;
 }
 
-const wallet = new FreighterWallet();
+const wallet = new StellarWallet();
 const STORAGE_KEY = 'siq-wallet';
 const CHANGE_EVENT = 'siq-wallet-change';
 
 /**
- * Freighter connection state. The public key persists across reloads; the
+ * Wallet connection state (any Stellar Wallets Kit wallet). The public key persists across reloads; the
  * secret key never leaves the extension.
  */
 export function useWallet(): WalletState {
@@ -49,7 +49,11 @@ export function useWallet(): WalletState {
       window.localStorage.setItem(STORAGE_KEY, key);
       window.dispatchEvent(new Event(CHANGE_EVENT));
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Wallet connection failed.');
+      const msg = err instanceof Error ? err.message : 'Wallet connection failed.';
+      // Closing the wallet picker is a choice, not an error.
+      if (!/closed the modal|cancel/i.test(msg)) {
+        setError(msg);
+      }
     } finally {
       setConnecting(false);
     }
@@ -58,6 +62,7 @@ export function useWallet(): WalletState {
   const disconnect = useCallback(() => {
     setPublicKey(null);
     setError(null);
+    void wallet.disconnect();
     window.localStorage.removeItem(STORAGE_KEY);
     window.dispatchEvent(new Event(CHANGE_EVENT));
   }, []);
