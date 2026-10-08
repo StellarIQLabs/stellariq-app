@@ -50,6 +50,9 @@ importers:
       '@fastify/websocket':
         specifier: 11.2.0
         version: 11.2.0
+      '@stellar/stellar-sdk':
+        specifier: 13.3.0
+        version: 13.3.0
       '@stellariq/schemas':
         specifier: workspace:^
         version: link:../../packages/schemas
