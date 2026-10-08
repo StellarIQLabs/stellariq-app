@@ -23,9 +23,7 @@ export function SiteHeader({ onMenuClick }: { onMenuClick: () => void }) {
           </svg>
         </button>
         <Link href="/" className="flex items-center gap-2" aria-label="StellarIQ Give home">
-          <span className="flex h-8 w-8 items-center justify-center rounded-md bg-accent font-mono text-sm font-bold text-white">
-            IQ
-          </span>
+          <img src="/icon.svg" alt="" width={32} height={32} className="h-8 w-8" />
           <span className="text-base font-bold tracking-tight">StellarIQ Give</span>
         </Link>
         <Badge tone="accent">{stellarNetwork}</Badge>
