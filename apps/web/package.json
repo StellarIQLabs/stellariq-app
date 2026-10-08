@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@creit.tech/stellar-wallets-kit": "2.7.1",
-    "@stellar/stellar-sdk": "13.3.0",
+    "@stellar/stellar-sdk": "17.2.1",
     "@stellariq/schemas": "workspace:^",
     "@stellariq/sdk": "workspace:^",
     "@stellariq/types": "workspace:^",
