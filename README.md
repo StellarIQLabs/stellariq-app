@@ -15,7 +15,7 @@ token a charity accepts.
 
 | Resource                           | Link                                                                                                                           |
 | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **Web app**                        | **WEB_URL**                                                                                                                    |
+| **Web app**                        | https://stellariq-web.vercel.app                                                                                               |
 | **API docs (Swagger UI)**          | https://stellariq-api-p1hz.onrender.com/docs                                                                                   |
 | **API health**                     | https://stellariq-api-p1hz.onrender.com/health                                                                                 |
 | **Campaigns API**                  | https://stellariq-api-p1hz.onrender.com/v1/campaigns                                                                           |
