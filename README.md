@@ -1,29 +1,40 @@
-# stellariq-app - Product, API, SDK & Web
+# StellarIQ Give - web app, API and SDK
 
-**StellarIQ** - _Intelligence for Stellar DeFi._ This repo is the product and
-user-facing layer: the web dashboard, the public REST + WebSocket API, the
-TypeScript SDK, and the shared design system.
+**StellarIQ Give** makes charity donations on Stellar transparent. Donors give
+to a campaign from their own wallet, the money goes straight to the charity's
+wallet in the same transaction, and every donation leaves a public receipt on
+chain that anyone can check.
 
-## 🚀 Live Demo
+This repo holds the user-facing product: the Next.js web app, the Fastify API
+that reads campaigns and receipts from the donations contract, the TypeScript
+SDK, and the shared design system. The market data, pool analytics and swap
+router pages are still here: they power converting a donor's asset into the
+token a charity accepts.
 
-| Resource                           | Link                                                                                                                         |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| **Web dashboard**                  | https://stellariq-app-web-49hh.vercel.app                                                                                    |
-| **API docs (Swagger UI)**          | https://stellariq-api-p1hz.onrender.com/docs                                                                                 |
-| **API health check**               | https://stellariq-api-p1hz.onrender.com/health                                                                               |
-| **Live API base**                  | `https://stellariq-api-p1hz.onrender.com/v1`                                                                                 |
-| **Swap router contract (testnet)** | [`CC277AA6…VHSP`](https://stellar.expert/explorer/testnet/contract/CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP) |
+## Live demo
 
-> ℹ️ The API runs on Render's free tier and sleeps after ~15 min idle - the
-> first request after inactivity may take 30-60s to cold-start. Subsequent
-> requests are fast. Try it: `curl https://stellariq-api-p1hz.onrender.com/v1/markets`
+| Resource                           | Link                                                                                                                           |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Web app**                        | **WEB_URL**                                                                                                                    |
+| **API docs (Swagger UI)**          | https://stellariq-api-p1hz.onrender.com/docs                                                                                   |
+| **API health**                     | https://stellariq-api-p1hz.onrender.com/health                                                                                 |
+| **Campaigns API**                  | https://stellariq-api-p1hz.onrender.com/v1/campaigns                                                                           |
+| **Donations contract (testnet)**   | [`CBCHKIDR...F2KX`](https://stellar.expert/explorer/testnet/contract/CBCHKIDRFJ4KO2DGJEP75NJPYN65YVD6QOVVHC5IU7PRTHGHW75OF2KX) |
+| **Swap router contract (testnet)** | [`CC277AA6...VHSP`](https://stellar.expert/explorer/testnet/contract/CC277AA6E6WZIQRA4N45TQ3O6VV5MUSDMRZCNHO43QENMYXV6E5OVHSP) |
 
-> **Contracts moved:** Soroban contracts now live in the standalone repo
-> [`StellarIQLabs/stellariq-contract`](https://github.com/StellarIQLabs/stellariq-contract).
-> This repo builds unsigned transactions via `@stellar/stellar-sdk` and delegates
-> signing to the wallet - it no longer contains a `contracts/` workspace.
+### Try a donation in 2 minutes
 
-Spec source of truth: [`PRD.md`](../PRD.md) (repo root, outside this repo).
+1. Install the [Freighter](https://www.freighter.app/) browser wallet and switch it to **Testnet**.
+2. Open the web app and pick a campaign (the seeded ones are labelled "Demo").
+3. Click **Connect Freighter to donate**, then **Get test XLM for this wallet** (Friendbot).
+4. Choose an amount, add a message if you like, click **Donate** and approve in Freighter.
+5. You land on your on-chain receipt. The campaign total and donor count update right away.
+
+No wallet? `curl https://stellariq-api-p1hz.onrender.com/v1/campaigns` shows the
+live on-chain data, and the contract repo explains how to donate from the CLI.
+
+> The API runs on Render's free tier. A scheduled job keeps it awake, but if it
+> has slept the first request can take up to a minute.
 
 ## Repository layout
 
@@ -97,7 +108,10 @@ Next.js App Router + Tailwind (preset shared from `@stellariq/ui`) +
 
 | Route                         | Page                                                                                                                                                                 |
 | ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                           | Overview: network totals, top markets, top pools, live whale-swap feed                                                                                               |
+| `/`                           | StellarIQ Give home: giving totals, open campaigns, latest donations                                                                                                 |
+| `/campaigns/[id]`             | Campaign progress, verification links, donation feed and the Freighter donate form                                                                                   |
+| `/receipts/[id]`              | Public on-chain donation receipt                                                                                                                                     |
+| `/overview`                   | DeFi overview: network totals, top markets, top pools, live whale-swap feed                                                                                          |
 | `/assets`, `/assets/[asset]`  | Searchable registry (code, issuer, verification badge, price) + asset intelligence                                                                                   |
 | `/markets`, `/markets/[pair]` | Volume-sorted catalog + detail (price header, timeframe tabs, OHLCV, volume/liquidity history, trades)                                                               |
 | `/pools`, `/pools/[pool]`     | Protocol-filtered catalog + detail (reserves, TVL, fees, volume/TVL, price impact, 7-day note)                                                                       |
@@ -117,6 +131,10 @@ envelopes, CORS, Helmet, global input sanitization, per-tier rate limits
 | Method & path                                              | Description                                                                                                    |
 | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | `GET /health`, `GET /ready`                                | Liveness; readiness probing the data layer (503 when down)                                                     |
+| `GET /v1/campaigns`, `GET /v1/campaigns/{id}`              | Campaigns read live from the donations contract (`status=active\|ended\|closed`)                               |
+| `GET /v1/campaigns/{id}/donations`, `GET /v1/donations`    | Latest donation receipts, per campaign or across all campaigns                                                 |
+| `GET /v1/receipts/{id}`                                    | One donation receipt                                                                                           |
+| `GET /v1/donations/stats`                                  | Total raised, donations, donors, active campaigns                                                              |
 | `GET /v1/assets`, `GET /v1/assets/{asset}`                 | Registry with `search`, `verified`, pagination                                                                 |
 | `GET /v1/prices/{asset}`, `GET /v1/prices/{asset}/history` | Aggregated price (confidence, timestamp, sources) + OHLCV (`timeframe=1H\|4H\|1D\|1W\|1M`)                     |
 | `GET /v1/markets`, `GET /v1/markets/{pair}`                | Catalog (`protocol`, `sort`) + aggregated cross-protocol pair view                                             |
