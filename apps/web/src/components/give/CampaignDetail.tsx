@@ -116,7 +116,8 @@ export function CampaignDetail({ id }: { id: number }) {
             />
             <Row
               label="Accepted token"
-              value={`${symbol} (${campaign.token})`}
+              value={campaign.token}
+              text={symbol}
               href={explorerUrl('contract', campaign.token)}
             />
           </dl>
@@ -132,7 +133,17 @@ export function CampaignDetail({ id }: { id: number }) {
   );
 }
 
-function Row({ label, value, href }: { label: string; value: string; href: string }) {
+function Row({
+  label,
+  value,
+  href,
+  text,
+}: {
+  label: string;
+  value: string;
+  href: string;
+  text?: string;
+}) {
   return (
     <div className="flex flex-wrap justify-between gap-2">
       <dt className="text-muted">{label}</dt>
@@ -144,7 +155,7 @@ function Row({ label, value, href }: { label: string; value: string; href: strin
           className="font-mono text-accent hover:underline"
           title={value}
         >
-          {truncateKey(value)}
+          {text ?? truncateKey(value)}
         </a>
       </dd>
     </div>
