@@ -1,16 +1,9 @@
 import { TransactionBuilder, rpc } from '@stellar/stellar-sdk';
-
-/** Minimal Freighter extension surface (window.freighterApi). */
-export interface FreighterApi {
-  getPublicKey(): Promise<string>;
-  signTransaction(xdr: string, opts: { networkPassphrase: string }): Promise<string>;
-}
-
-declare global {
-  interface Window {
-    freighterApi?: FreighterApi;
-  }
-}
+import {
+  isConnected,
+  requestAccess,
+  signTransaction as freighterSign,
+} from '@stellar/freighter-api';
 
 export interface SignResult {
   signedXdr: string;
@@ -18,33 +11,49 @@ export interface SignResult {
 
 export interface WalletProvider {
   readonly id: 'freighter';
-  /** False when the extension is not installed (server-side included). */
-  isAvailable(): boolean;
+  /** Resolves false when the extension is not installed (server-side included). */
+  detect(): Promise<boolean>;
   getPublicKey(): Promise<string>;
   signTransaction(xdr: string, networkPassphrase: string): Promise<SignResult>;
 }
 
+/**
+ * Freighter via the official `@stellar/freighter-api` bridge. Current
+ * Freighter builds no longer inject `window.freighterApi`, so the bridge is
+ * the only reliable way to talk to the extension.
+ */
 export class FreighterWallet implements WalletProvider {
   readonly id = 'freighter' as const;
 
-  isAvailable(): boolean {
-    return typeof window !== 'undefined' && !!window.freighterApi;
+  async detect(): Promise<boolean> {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    try {
+      const res = await isConnected();
+      return !res.error && res.isConnected;
+    } catch {
+      return false;
+    }
   }
 
-  private api(): FreighterApi {
-    if (!this.isAvailable() || !window.freighterApi) {
+  async getPublicKey(): Promise<string> {
+    if (!(await this.detect())) {
       throw new Error('Freighter is not installed. Install it to connect a wallet.');
     }
-    return window.freighterApi;
-  }
-
-  getPublicKey(): Promise<string> {
-    return this.api().getPublicKey();
+    const res = await requestAccess();
+    if (res.error || !res.address) {
+      throw new Error(res.error?.message ?? 'Freighter did not share an address.');
+    }
+    return res.address;
   }
 
   async signTransaction(xdr: string, networkPassphrase: string): Promise<SignResult> {
-    const signedXdr = await this.api().signTransaction(xdr, { networkPassphrase });
-    return { signedXdr };
+    const res = await freighterSign(xdr, { networkPassphrase });
+    if (res.error || !res.signedTxXdr) {
+      throw new Error(res.error?.message ?? 'Signing was cancelled in Freighter.');
+    }
+    return { signedXdr: res.signedTxXdr };
   }
 }
 

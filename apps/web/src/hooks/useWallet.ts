@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FreighterWallet, truncateKey } from '@/lib/wallet';
 
 export interface WalletState {
@@ -24,6 +24,11 @@ export function useWallet(): WalletState {
   );
   const [connecting, setConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [available, setAvailable] = useState(true);
+
+  useEffect(() => {
+    void wallet.detect().then(setAvailable);
+  }, []);
 
   const connect = useCallback(async () => {
     setConnecting(true);
@@ -45,7 +50,7 @@ export function useWallet(): WalletState {
     window.localStorage.removeItem('siq-wallet');
   }, []);
 
-  return { publicKey, connecting, error, available: wallet.isAvailable(), connect, disconnect };
+  return { publicKey, connecting, error, available, connect, disconnect };
 }
 
 export { truncateKey };
