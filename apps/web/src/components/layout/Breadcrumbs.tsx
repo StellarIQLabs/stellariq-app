@@ -8,6 +8,9 @@ const SECTION_LABELS: Record<string, string> = {
   assets: 'Assets',
   pools: 'Pools',
   swap: 'Swap',
+  overview: 'Overview',
+  campaigns: 'Campaigns',
+  receipts: 'Receipts',
 };
 
 /** Breadcrumb trail derived from the current route, wrapping every page. */

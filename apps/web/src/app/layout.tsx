@@ -4,11 +4,11 @@ import './globals.css';
 
 export const metadata = {
   title: {
-    default: 'StellarIQ - Intelligence for Stellar DeFi',
-    template: '%s · StellarIQ',
+    default: 'StellarIQ Give - Transparent charity donations on Stellar',
+    template: '%s · StellarIQ Give',
   },
   description:
-    'Asset prices, DEX markets, pool analytics and best-execution swaps for Stellar DeFi.',
+    'Donate to charity campaigns on Stellar. Funds go straight to the charity and every donation leaves a public on-chain receipt.',
 };
 
 // Global layout: header, sidebar, mobile shell, breadcrumbs and footer wrap

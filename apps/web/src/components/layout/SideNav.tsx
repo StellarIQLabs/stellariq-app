@@ -11,7 +11,12 @@ export interface NavItem {
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: '/', label: 'Overview', match: (p) => p === '/' },
+  {
+    href: '/',
+    label: 'Campaigns',
+    match: (p) => p === '/' || p.startsWith('/campaigns') || p.startsWith('/receipts'),
+  },
+  { href: '/overview', label: 'Overview', match: (p) => p.startsWith('/overview') },
   { href: '/markets', label: 'Markets', match: (p) => p.startsWith('/markets') },
   { href: '/assets', label: 'Assets', match: (p) => p.startsWith('/assets') },
   { href: '/pools', label: 'Pools', match: (p) => p.startsWith('/pools') },
