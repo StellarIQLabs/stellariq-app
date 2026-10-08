@@ -25,7 +25,12 @@ export function WalletButton() {
 
   return (
     <span className="inline-flex flex-col items-end gap-1">
-      <Button size="sm" loading={connecting} onClick={() => void connect()}>
+      <Button
+        size="sm"
+        className="whitespace-nowrap"
+        loading={connecting}
+        onClick={() => void connect()}
+      >
         Connect wallet
       </Button>
       {!available && !connecting && (
@@ -33,9 +38,9 @@ export function WalletButton() {
           href="https://www.freighter.app/"
           target="_blank"
           rel="noreferrer"
-          className="text-xs text-muted hover:text-text"
+          className="hidden text-xs text-muted hover:text-text sm:inline"
         >
-          Install Freighter to sign swaps
+          Install Freighter (Testnet)
         </a>
       )}
       {error && (

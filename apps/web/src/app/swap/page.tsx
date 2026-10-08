@@ -1,5 +1,4 @@
 import { SwapTerminal } from '@/components/swap/SwapTerminal';
-import { WalletButton } from '@/components/swap/WalletButton';
 
 export const metadata = { title: 'Swap' };
 
@@ -15,7 +14,6 @@ export default function SwapPage() {
             Best-execution quotes across Stellar routes. You always keep custody of your keys.
           </p>
         </div>
-        <WalletButton />
       </header>
       <SwapTerminal />
     </main>
