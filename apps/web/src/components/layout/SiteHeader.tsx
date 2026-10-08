@@ -35,7 +35,7 @@ export function SiteHeader({ onMenuClick }: { onMenuClick: () => void }) {
         <div className="ml-auto flex items-center gap-3">
           <Link
             href="/"
-            className="hidden rounded-md bg-positive px-4 py-2 text-sm font-medium text-white hover:brightness-110 sm:inline-block"
+            className="hidden h-9 items-center rounded-md bg-positive px-4 text-sm font-medium text-white hover:brightness-110 sm:inline-flex"
           >
             Donate
           </Link>

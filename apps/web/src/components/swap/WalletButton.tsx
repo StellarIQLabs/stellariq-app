@@ -9,7 +9,7 @@ export function WalletButton() {
 
   if (publicKey) {
     return (
-      <span className="inline-flex items-center gap-2">
+      <span className="inline-flex h-9 items-center gap-2">
         <span
           className="rounded-full bg-positive/15 px-3 py-1.5 font-mono text-xs text-positive"
           title={publicKey}
@@ -23,28 +23,35 @@ export function WalletButton() {
     );
   }
 
+  if (!available) {
+    return (
+      <a
+        href="https://www.freighter.app/"
+        target="_blank"
+        rel="noreferrer"
+        title="Install Freighter and switch it to Testnet"
+        className="inline-flex h-9 items-center whitespace-nowrap rounded-md border border-border px-3 text-sm font-medium text-text hover:border-accent"
+      >
+        Install Freighter
+      </a>
+    );
+  }
+
   return (
-    <span className="inline-flex flex-col items-end gap-1">
+    <span className="relative inline-flex items-center">
       <Button
         size="sm"
-        className="whitespace-nowrap"
+        className="h-9 whitespace-nowrap"
         loading={connecting}
         onClick={() => void connect()}
       >
         Connect wallet
       </Button>
-      {!available && !connecting && (
-        <a
-          href="https://www.freighter.app/"
-          target="_blank"
-          rel="noreferrer"
-          className="hidden text-xs text-muted hover:text-text sm:inline"
-        >
-          Install Freighter (Testnet)
-        </a>
-      )}
       {error && (
-        <span role="alert" className="text-xs text-negative">
+        <span
+          role="alert"
+          className="absolute right-0 top-full z-40 mt-2 w-64 rounded-md border border-border bg-surface p-2 text-xs text-negative shadow-lg"
+        >
           {error}
         </span>
       )}
