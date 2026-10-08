@@ -1,7 +1,14 @@
 import { expect, test } from '@playwright/test';
 
-test('overview loads DeFi totals and sections', async ({ page }) => {
+test('home shows StellarIQ Give campaigns', async ({ page }) => {
   await page.goto('/');
+  await expect(page.getByRole('heading', { name: 'Transparent giving on Stellar' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Open campaigns' })).toBeVisible();
+  await expect(page.getByText('Raised on-chain')).toBeVisible();
+});
+
+test('overview loads DeFi totals and sections', async ({ page }) => {
+  await page.goto('/overview');
   await expect(page.getByRole('heading', { name: 'Stellar DeFi Overview' })).toBeVisible();
   await expect(page.getByText('Top markets')).toBeVisible();
   await expect(page.getByText('Top pools')).toBeVisible();
