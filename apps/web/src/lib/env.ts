@@ -11,6 +11,8 @@ export interface WebEnv {
   sorobanRpcUrl: string;
   /** Swap-router contract id. Undefined until the contract is deployed. */
   swapRouterId?: string;
+  /** StellarIQ Give donations contract id (testnet deployment by default). */
+  donationsContractId: string;
 }
 
 function required(name: string, raw: string | undefined, fallback?: string): string {
@@ -56,6 +58,11 @@ export function getWebEnv(): WebEnv {
       'NEXT_PUBLIC_SOROBAN_RPC_URL',
       process.env.NEXT_PUBLIC_SOROBAN_RPC_URL,
       'https://soroban-testnet.stellar.org',
+    ),
+    donationsContractId: required(
+      'NEXT_PUBLIC_DONATIONS_CONTRACT_ID',
+      process.env.NEXT_PUBLIC_DONATIONS_CONTRACT_ID,
+      'CBCHKIDRFJ4KO2DGJEP75NJPYN65YVD6QOVVHC5IU7PRTHGHW75OF2KX',
     ),
     ...(swapRouterId !== undefined ? { swapRouterId } : {}),
   };
