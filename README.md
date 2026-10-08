@@ -24,10 +24,10 @@ token a charity accepts.
 
 ### Try a donation in 2 minutes
 
-1. Install the [Freighter](https://www.freighter.app/) browser wallet and switch it to **Testnet**.
+1. Use any Stellar wallet set to **Testnet**: Freighter, xBull, Rabet, Hana, LOBSTR, or **Albedo**, which works in the browser with nothing to install.
 2. Open the web app and pick a campaign (the seeded ones are labelled "Demo").
-3. Click **Connect Freighter to donate**, then **Get test XLM for this wallet** (Friendbot).
-4. Choose an amount, add a message if you like, click **Donate** and approve in Freighter.
+3. Click **Connect a wallet to donate**, pick your wallet, then **Get test XLM for this wallet** (Friendbot).
+4. Choose an amount, add a message if you like, click **Donate** and approve in your wallet.
 5. You land on your on-chain receipt. The campaign total and donor count update right away.
 
 No wallet? `curl https://stellariq-api-p1hz.onrender.com/v1/campaigns` shows the
@@ -106,16 +106,16 @@ Per workspace: `apps/web` (`dev`, `build`, `start`, `typecheck`, `lint`,
 Next.js App Router + Tailwind (preset shared from `@stellariq/ui`) +
 `lightweight-charts` for OHLCV.
 
-| Route                         | Page                                                                                                                                                                 |
-| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/`                           | StellarIQ Give home: giving totals, open campaigns, latest donations                                                                                                 |
-| `/campaigns/[id]`             | Campaign progress, verification links, donation feed and the Freighter donate form                                                                                   |
-| `/receipts/[id]`              | Public on-chain donation receipt                                                                                                                                     |
-| `/overview`                   | DeFi overview: network totals, top markets, top pools, live whale-swap feed                                                                                          |
-| `/assets`, `/assets/[asset]`  | Searchable registry (code, issuer, verification badge, price) + asset intelligence                                                                                   |
-| `/markets`, `/markets/[pair]` | Volume-sorted catalog + detail (price header, timeframe tabs, OHLCV, volume/liquidity history, trades)                                                               |
-| `/pools`, `/pools/[pool]`     | Protocol-filtered catalog + detail (reserves, TVL, fees, volume/TVL, price impact, 7-day note)                                                                       |
-| `/swap`                       | Swap terminal: validated input → debounced quotes → best execution → route comparison → impact/fee breakdown → review modal → Freighter sign → submit → confirmation |
+| Route                         | Page                                                                                                                                                              |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`                           | StellarIQ Give home: giving totals, open campaigns, latest donations                                                                                              |
+| `/campaigns/[id]`             | Campaign progress, verification links, donation feed and the multi-wallet donate form                                                                             |
+| `/receipts/[id]`              | Public on-chain donation receipt                                                                                                                                  |
+| `/overview`                   | DeFi overview: network totals, top markets, top pools, live whale-swap feed                                                                                       |
+| `/assets`, `/assets/[asset]`  | Searchable registry (code, issuer, verification badge, price) + asset intelligence                                                                                |
+| `/markets`, `/markets/[pair]` | Volume-sorted catalog + detail (price header, timeframe tabs, OHLCV, volume/liquidity history, trades)                                                            |
+| `/pools`, `/pools/[pool]`     | Protocol-filtered catalog + detail (reserves, TVL, fees, volume/TVL, price impact, 7-day note)                                                                    |
+| `/swap`                       | Swap terminal: validated input → debounced quotes → best execution → route comparison → impact/fee breakdown → review modal → wallet sign → submit → confirmation |
 
 Global shell (header, sidebar, mobile drawer, breadcrumbs, footer) wraps every
 page; `loading.tsx` / `error.tsx` / `not-found.tsx` cover async states.
@@ -188,7 +188,7 @@ Soroban contracts have moved to [`StellarIQLabs/stellariq-contract`](https://git
 `apps/web/src/lib/` in this repo holds the integration side: `contracts.ts` (router
 interfaces, leg mapping, `StubRouterClient`), `txBuilder.ts` (selected route →
 unsigned XDR via `@stellar/stellar-sdk`), `wallet.ts` + `useWallet` +
-`WalletButton` (Freighter connect/sign, Soroban-RPC submit/poll). Deploys are driven from the contract repo and `stellariq-infra/scripts/deploy-contracts.sh`.
+`WalletButton` (Stellar Wallets Kit picker for Freighter, Albedo, xBull, Rabet, Hana and LOBSTR; Soroban-RPC submit/poll). Deploys are driven from the contract repo and `stellariq-infra/scripts/deploy-contracts.sh`.
 
 ## Testing
 
