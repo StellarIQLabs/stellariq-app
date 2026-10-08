@@ -2,7 +2,7 @@
   "name": "stellariq-app",
   "version": "0.1.0",
   "private": true,
-  "description": "StellarIQ — Intelligence for Stellar DeFi. Product, API, SDK, Web and Contracts monorepo.",
+  "description": "StellarIQ Give - transparent charity donations on Stellar. Web app, API, SDK and design system.",
   "packageManager": "pnpm@9.15.9",
   "engines": {
     "node": ">=20",
